@@ -90,16 +90,28 @@ namespace Android.BLE
 
         private void OnErrorReceived(string errorMessage)
         {
+            CheckForLog(errorMessage);
+        }
+
+        private void CheckForLog(string logMessage)
+        {
             if (UseUnityLog)
-                Debug.LogWarning(errorMessage);
+                Debug.LogWarning(logMessage);
             if (UseAndroidLog)
-                AndroidLog(errorMessage);
+                AndroidLog(logMessage);
         }
 
         public void AndroidLog(string message)
         {
             if (_initialized)
                 _bleLibrary?.CallStatic("androidLog", message);
+        }
+
+        internal void SendCommand(string command, params object[] parameters)
+        {
+            if (LogAllMessages)
+                CheckForLog("Calling Command: " + command);
+            _bleLibrary?.Call(command, parameters);
         }
 
         private static void CreateBleManagerObject()
