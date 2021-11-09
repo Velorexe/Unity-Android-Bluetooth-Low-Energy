@@ -305,10 +305,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1162348555}
+  - component: {fileID: 1162348556}
   m_Layer: 0
-  m_Name: BLE
+  m_Name: BleManager
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -327,6 +328,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1162348556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162348554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 060df4d41c6959541ba0cb2c4485fc8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitializeOnAwake: 1
+  LogAllMessages: 0
+  UseUnityLog: 1
+  UseAndroidLog: 0
 --- !u!1 &1913812758
 GameObject:
   m_ObjectHideFlags: 0

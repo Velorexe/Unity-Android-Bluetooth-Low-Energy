@@ -5,7 +5,7 @@ namespace Android.BLE
 {
     public class BleManager : MonoBehaviour
     {
-        public static BleManager Instance 
+        public static BleManager Instance
         {
             get
             {
@@ -23,26 +23,20 @@ namespace Android.BLE
         public static bool IsInitialized { get => _initialized; }
         private static bool _initialized = false;
 
-        public bool InitializeOnAwake = false;
-
-        public bool LogErrors
-        {
-            get => _logErrors;
-            set
-            {
-                if (value)
-                    _adapter.OnErrorReceived += OnErrorReceived;
-                else
-                    _adapter.OnErrorReceived -= OnErrorReceived;
-
-                _logErrors = value;
-            }
-        }
         [SerializeField]
-        private bool _logErrors;
+        private BleAdapter _adapter;
 
-        [SerializeField]
-        private static BleAdapter _adapter;
+        [Tooltip("Use Initialize() if you want to Initialize manually")]
+        public bool InitializeOnAwake = true;
+
+        [Header("Logging")]
+        [Tooltip("Logs all messages coming through the BleManager")]
+        public bool LogAllMessages = false;
+
+        [Tooltip("Passes messages through to the Unity Debug.Log system")]
+        public bool UseUnityLog = true;
+        [Tooltip("Passes messages through to Android's Logcat")]
+        public bool UseAndroidLog = false;
 
         internal static AndroidJavaObject _bleLibrary;
 
@@ -54,11 +48,10 @@ namespace Android.BLE
                 Initialize();
 
             _adapter.OnMessageReceived += OnBleMessageReceived;
-            if (LogErrors)
-                _adapter.OnErrorReceived += OnErrorReceived;
+            _adapter.OnErrorReceived += OnErrorReceived;
         }
 
-        public static void Initialize()
+        public void Initialize()
         {
             if (!_initialized)
             {
@@ -80,7 +73,7 @@ namespace Android.BLE
                 #endregion
 
                 #region Android Library
-                if(_bleLibrary == null)
+                if (_bleLibrary == null)
                 {
                     AndroidJavaClass librarySingleton = new AndroidJavaClass("com.velorexe.unityandroidble.UnityAndroidBLE");
                     _bleLibrary = librarySingleton.CallStatic<AndroidJavaObject>("getInstance");
@@ -89,12 +82,25 @@ namespace Android.BLE
             }
         }
 
-        private static void OnBleMessageReceived(BleObject obj)
+        private void OnBleMessageReceived(BleObject obj)
         {
-
+            if (LogAllMessages)
+                AndroidLog(JsonUtility.ToJson(obj, true));
         }
 
-        private static void OnErrorReceived(string errorMessage) => Debug.LogWarning(errorMessage);
+        private void OnErrorReceived(string errorMessage)
+        {
+            if (UseUnityLog)
+                Debug.LogWarning(errorMessage);
+            if (UseAndroidLog)
+                AndroidLog(errorMessage);
+        }
+
+        public void AndroidLog(string message)
+        {
+            if (_initialized)
+                _bleLibrary?.CallStatic("androidLog", message);
+        }
 
         private static void CreateBleManagerObject()
         {
