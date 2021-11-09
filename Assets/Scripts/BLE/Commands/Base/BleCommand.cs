@@ -14,11 +14,11 @@
             RunContiniously = runContiniously;
         }
 
-        public abstract void Start(BleManager callBack);
+        public abstract void Start();
 
-        public virtual void End(BleManager callBack) { }
+        public virtual void End() { }
 
-        public virtual void EndOnTimeout(BleManager callBack) => End(callBack);
+        public virtual void EndOnTimeout() => End();
 
         public virtual bool CommandReceived(BleObject obj)
         {

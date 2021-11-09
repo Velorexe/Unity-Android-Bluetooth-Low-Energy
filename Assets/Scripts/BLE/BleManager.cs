@@ -93,23 +93,23 @@ namespace Android.BLE
             CheckForLog(errorMessage);
         }
 
-        private void CheckForLog(string logMessage)
+        private static void CheckForLog(string logMessage)
         {
-            if (UseUnityLog)
+            if (Instance.UseUnityLog)
                 Debug.LogWarning(logMessage);
-            if (UseAndroidLog)
+            if (Instance.UseAndroidLog)
                 AndroidLog(logMessage);
         }
 
-        public void AndroidLog(string message)
+        public static void AndroidLog(string message)
         {
             if (_initialized)
                 _bleLibrary?.CallStatic("androidLog", message);
         }
 
-        internal void SendCommand(string command, params object[] parameters)
+        internal static void SendCommand(string command, params object[] parameters)
         {
-            if (LogAllMessages)
+            if(Instance.LogAllMessages)
                 CheckForLog("Calling Command: " + command);
             _bleLibrary?.Call(command, parameters);
         }

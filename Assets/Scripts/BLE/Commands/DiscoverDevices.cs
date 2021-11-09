@@ -20,9 +20,9 @@ namespace Android.BLE.Commands
             _discoverTime = discoverTime;
         }
 
-        public override void Start(BleManager callBack) => callBack.SendCommand("scanBleDevices", _discoverTime);
+        public override void Start() => BleManager.SendCommand("scanBleDevices", _discoverTime);
 
-        public override void End(BleManager callBack) => callBack.SendCommand("stopScanBleDevices");
+        public override void End() => BleManager.SendCommand("stopScanBleDevices");
 
         public override bool CommandReceived(BleObject obj)
         {
