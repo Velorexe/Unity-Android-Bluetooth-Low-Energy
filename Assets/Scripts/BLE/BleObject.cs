@@ -15,11 +15,6 @@ namespace Android.BLE
         [SerializeField]
         private string errorMessage = string.Empty;
 
-        public object ConvertMessage<T>()
-        {
-            return null;
-        }
-
         public override string ToString() => JsonUtility.ToJson(this, true);
     }
 }
