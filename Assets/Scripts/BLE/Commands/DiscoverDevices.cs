@@ -24,6 +24,14 @@ namespace Android.BLE.Commands
 
         public override void End(BleManager callBack) => callBack.SendCommand("stopScanBleDevices");
 
+        public override bool CommandReceived(BleObject obj)
+        {
+            if (string.Equals(obj.Command, "DiscoveredDevice"))
+                OnDeviceDiscovered?.Invoke(obj.Device, obj.Name);
+
+            return string.Equals(obj.Command, "FinishedDeiscovering");
+        }
+
         public delegate void DeviceDiscovered(string deviceAddress, string deviceName);
     }
 }
