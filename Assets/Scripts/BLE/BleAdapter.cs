@@ -7,8 +7,8 @@ namespace Android.BLE
     public class BleAdapter : MonoBehaviour
     {
         // .NET Events
-        public event EventHandler<BleObject> OnMessageReceived;
-        public event EventHandler<string> OnErrorReceived;
+        public event MessageReceived OnMessageReceived;
+        public event ErrorReceived OnErrorReceived;
 
         // Unity Events
         public BleMessageReceived UnityOnMessageReceived;
@@ -21,14 +21,17 @@ namespace Android.BLE
             BleObject obj = JsonUtility.FromJson<BleObject>(jsonMessage);
             if (obj.HasError)
             {
-                OnErrorReceived?.Invoke(this, obj.ErrorMessage);
+                OnErrorReceived?.Invoke(obj.ErrorMessage);
                 UnityOnErrorReceived?.Invoke(obj.ErrorMessage);
             }
             else
             {
-                OnMessageReceived?.Invoke(this, obj);
+                OnMessageReceived?.Invoke(obj);
                 UnityOnMessageReceived?.Invoke(obj);
             }
         }
+
+        public delegate void MessageReceived(BleObject obj);
+        public delegate void ErrorReceived(string errorMessage);
     }
 }
