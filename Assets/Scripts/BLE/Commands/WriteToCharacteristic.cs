@@ -5,10 +5,10 @@ namespace Android.BLE.Commands
 {
     public class WriteToCharacteristic : BleCommand
     {
-        public string DeviceAddress;
+        public readonly string DeviceAddress;
 
-        public string Service;
-        public string Characteristic;
+        public readonly string Service;
+        public readonly string Characteristic;
 
         public readonly object StringData;
 

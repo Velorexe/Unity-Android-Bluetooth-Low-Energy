@@ -41,6 +41,8 @@ namespace Android.BLE
         private string errorMessage = string.Empty;
         #endregion
 
+        public byte[] GetByteMessage() => Convert.FromBase64String(command);
+
         public override string ToString() => JsonUtility.ToJson(this, true);
     }
 }
