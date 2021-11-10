@@ -64,7 +64,7 @@ namespace Android.BLE
         {
             _activeTimer += Time.deltaTime;
 
-            if(_activeCommand != null && _activeTimer > _activeCommand.Timeout)
+            if (_activeCommand != null && _activeTimer > _activeCommand.Timeout)
             {
                 CheckForLog("Timed Out: " + _activeCommand + " - " + _activeCommand.Timeout);
 
@@ -130,7 +130,7 @@ namespace Android.BLE
         {
             CheckForLog(JsonUtility.ToJson(obj, true));
 
-            if(_activeCommand != null && _activeCommand.CommandReceived(obj))
+            if (_activeCommand != null && _activeCommand.CommandReceived(obj))
             {
                 _activeCommand.End();
 
@@ -153,6 +153,28 @@ namespace Android.BLE
                     _parrallelStack[i].End();
                     _parrallelStack.RemoveAt(i);
                 }
+            }
+        }
+
+        public void QueueCommand(BleCommand command)
+        {
+            CheckForLog("Queueing Command: " + command.GetType().Name);
+            if(command.RunParallel || command.RunContiniously)
+            {
+                _parrallelStack.Add(command);
+                command.Start();
+            }
+            else
+            {
+                if (_activeCommand == null)
+                {
+                    _activeTimer = 0f;
+
+                    _activeCommand = command;
+                    _activeCommand.Start();
+                }
+                else
+                    _commandQueue.Enqueue(command);
             }
         }
 
