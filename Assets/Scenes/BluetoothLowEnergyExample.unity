@@ -340,6 +340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 060df4d41c6959541ba0cb2c4485fc8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _adapter: {fileID: 1913812760}
   InitializeOnAwake: 1
   LogAllMessages: 0
   UseUnityLog: 1
