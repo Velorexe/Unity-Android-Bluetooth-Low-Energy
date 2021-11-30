@@ -47,8 +47,6 @@ namespace Android.BLE
         private static BleCommand _activeCommand = null;
         private static float _activeTimer = 0f;
 
-        private BleObject _receivedCommand = null;
-
         private void Awake()
         {
             _instance = this;
