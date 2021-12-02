@@ -14,26 +14,11 @@ namespace Android.BLE.Commands
 
         public readonly bool CustomGatt;
 
-        public ReadFromCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, string data, bool customGatt = false) : base(false, false)
+        public ReadFromCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, bool customGatt = false) : base(false, false)
         {
             DeviceAddress = deviceAddress;
             Service = serviceAddress;
             Characteristic = characteristicAddress;
-
-            StringData = data;
-
-            CustomGatt = customGatt;
-
-            _timeout = 1f;
-        }
-
-        public ReadFromCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, byte[] data, bool customGatt = false) : base(false, false)
-        {
-            DeviceAddress = deviceAddress;
-            Service = serviceAddress;
-            Characteristic = characteristicAddress;
-
-            StringData = data;
 
             CustomGatt = customGatt;
 
@@ -42,7 +27,7 @@ namespace Android.BLE.Commands
 
         public override void Start()
         {
-            string command = CustomGatt ? "writeToCustomGattCharacteristic" : "writeToGattCharacteristic";
+            string command = CustomGatt ? "readFromCustomCharacteristic" : "readFromCharacteristic";
             BleManager.SendCommand(command, DeviceAddress, Service, Characteristic, StringData);
         }
     }
