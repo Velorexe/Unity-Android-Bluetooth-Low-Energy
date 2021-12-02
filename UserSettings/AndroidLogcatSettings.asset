@@ -1,9 +1,9 @@
 {
     "m_SelectedDeviceId": "BH902JA28Y",
     "m_SelectedPackage": {
-        "deviceId": "BH902JA28Y",
-        "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-        "processId": 20000,
+        "deviceId": "",
+        "name": "",
+        "processId": 0,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -17,62 +17,32 @@
         {
             "deviceId": "BH902JA28Y",
             "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 13217,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 13498,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 15580,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 18173,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 18415,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
             "processId": 18962,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "BH902JA28Y",
             "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
             "processId": 19234,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "BH902JA28Y",
             "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
             "processId": 19599,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "BH902JA28Y",
             "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
             "processId": 19806,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "BH902JA28Y",
             "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
             "processId": 20000,
-            "exited": false
+            "exited": true
         }
     ],
     "m_Tags": {
