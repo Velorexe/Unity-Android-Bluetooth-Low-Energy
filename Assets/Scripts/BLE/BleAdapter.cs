@@ -31,6 +31,8 @@ namespace Android.BLE
             }
         }
 
+        public void LogMessage(string log) => Debug.Log(log);
+
         public delegate void MessageReceived(BleObject obj);
         public delegate void ErrorReceived(string errorMessage);
     }

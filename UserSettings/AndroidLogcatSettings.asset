@@ -2,76 +2,46 @@
     "m_SelectedDeviceId": "BH902JA28Y",
     "m_SelectedPackage": {
         "deviceId": "BH902JA28Y",
-        "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-        "processId": 20000,
+        "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+        "processId": 25742,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
         {
             "deviceId": "BH902JA28Y",
-            "name": "com.microsoft.launcher",
-            "processId": 8354,
-            "exited": false
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 13217,
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 21045,
             "exited": true
         },
         {
             "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 13498,
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 21317,
             "exited": true
         },
         {
             "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 15580,
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 22088,
             "exited": true
         },
         {
             "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 18173,
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 25288,
             "exited": true
         },
         {
             "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 18415,
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 25546,
             "exited": true
         },
         {
             "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 18962,
-            "exited": false
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 19234,
-            "exited": false
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 19599,
-            "exited": false
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 19806,
-            "exited": false
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.DefaultCompany.UnityBluetoothLowEnergy",
-            "processId": 20000,
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 25742,
             "exited": false
         }
     ],

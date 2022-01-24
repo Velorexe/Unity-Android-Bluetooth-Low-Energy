@@ -34,10 +34,18 @@ public class DeviceButton : MonoBehaviour
         BleManager.Instance.QueueCommand(new ConnectToDevice(_deviceUuid, OnConnected, OnDisconnected));
     }
 
+    public void SubscribeToExampleService()
+    {
+        //Replace these Characteristics with YOUR device's characteristics
+        BleManager.Instance.QueueCommand(new SubscribeToCharacteristic(_deviceUuid, "1001", "2a19"));
+    }
+
     private void OnConnected(string deviceUuid)
     {
         _previousColor = _deviceButtonImage.color;
         _deviceButtonImage.color = _onConnectedColor;
+
+        SubscribeToExampleService();
     }
 
     private void OnDisconnected(string deviceUuid)

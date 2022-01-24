@@ -202,7 +202,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 525964714}
   m_HandleRect: {fileID: 525964713}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1481,7 +1481,7 @@ MonoBehaviour:
   _deviceButton: {fileID: 3530289157807453847, guid: 7bc63d3fc4306874092b9e3218b99e33,
     type: 3}
   _deviceList: {fileID: 663478794}
-  _scanTime: 10000
+  _scanTime: 10
 --- !u!1 &2063471661
 GameObject:
   m_ObjectHideFlags: 0
