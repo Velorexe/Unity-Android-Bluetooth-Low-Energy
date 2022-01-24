@@ -29,7 +29,7 @@ namespace Android.BLE.Commands
             if (string.Equals(obj.Command, "DiscoveredDevice"))
                 OnDeviceDiscovered?.Invoke(obj.Device, obj.Name);
 
-            return string.Equals(obj.Command, "FinishedDeiscovering");
+            return string.Equals(obj.Command, "FinishedDiscovering");
         }
 
         public delegate void DeviceDiscovered(string deviceAddress, string deviceName);

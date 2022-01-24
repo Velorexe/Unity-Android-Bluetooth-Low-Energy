@@ -1,8 +1,9 @@
 ﻿using Android.BLE.Extension;
+using System;
 
 namespace Android.BLE.Commands
 {
-    public class SubscribeToCharacteristic<T> : BleCommand where T : struct
+    public class SubscribeToCharacteristic : BleCommand
     {
         public readonly string DeviceAddress;
 
@@ -12,6 +13,24 @@ namespace Android.BLE.Commands
         public readonly CharacteristicChanged OnCharacteristicChanged;
 
         private readonly bool _customGatt = false;
+
+        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic) : base(true, true)
+        {
+            DeviceAddress = deviceAddress;
+
+            Service = service;
+            Characteristic = characteristic;
+        }
+
+        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, CharacteristicChanged onDataFound) : base(true, true)
+        {
+            DeviceAddress = deviceAddress;
+
+            Service = service;
+            Characteristic = characteristic;
+
+            OnCharacteristicChanged += onDataFound;
+        }
 
         public override void Start()
         {
