@@ -28,7 +28,7 @@ namespace Android.BLE.Commands
         public override void Start()
         {
             string command = CustomGatt ? "readFromCustomCharacteristic" : "readFromCharacteristic";
-            BleManager.SendCommand(command, DeviceAddress, Service, Characteristic, StringData);
+            BleManager.SendCommand(command, DeviceAddress, Service, Characteristic);
         }
     }
 }

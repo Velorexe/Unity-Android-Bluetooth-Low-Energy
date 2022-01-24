@@ -11,7 +11,7 @@ public class ExampleBleInteractor : MonoBehaviour
     private Transform _deviceList;
 
     [SerializeField]
-    private int _scanTime = 10000;
+    private int _scanTime = 10;
 
     private float _scanTimer = 0f;
 
@@ -21,13 +21,17 @@ public class ExampleBleInteractor : MonoBehaviour
     {
         if (!_isScanning)
         {
-            BleManager.Instance.QueueCommand(new DiscoverDevices(OnDeviceFound, _scanTime));
             _isScanning = true;
+            BleManager.Instance.QueueCommand(new DiscoverDevices(OnDeviceFound, _scanTime * 1000));
         }
-        else
+    }
+
+    private void Update()
+    {
+        if(_isScanning)
         {
             _scanTimer += Time.deltaTime;
-            if (_scanTimer > _scanTime)
+            if(_scanTimer > _scanTime)
             {
                 _scanTimer = 0f;
                 _isScanning = false;
