@@ -14,15 +14,17 @@ namespace Android.BLE.Commands
 
         private readonly bool _customGatt = false;
 
-        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic) : base(true, true)
+        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, bool customGatt = false) : base(true, true)
         {
             DeviceAddress = deviceAddress;
 
             Service = service;
             Characteristic = characteristic;
+
+            _customGatt = customGatt;
         }
 
-        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, CharacteristicChanged onDataFound) : base(true, true)
+        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, CharacteristicChanged onDataFound, bool customGatt = false) : base(true, true)
         {
             DeviceAddress = deviceAddress;
 
@@ -30,6 +32,8 @@ namespace Android.BLE.Commands
             Characteristic = characteristic;
 
             OnCharacteristicChanged += onDataFound;
+
+            _customGatt = customGatt;
         }
 
         public override void Start()
@@ -63,7 +67,7 @@ namespace Android.BLE.Commands
                 {
                     if (string.Equals(obj.Device, DeviceAddress) &&
                         string.Equals(obj.Service, DeviceAddress) &&
-                        string.Equals(obj.Characteristic, Characteristic.Get16BitUuid()))
+                        string.Equals(obj.Characteristic, Characteristic.Get8BitUuid()))
                     {
                         OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
                     }
