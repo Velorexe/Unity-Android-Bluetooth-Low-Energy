@@ -67,7 +67,7 @@ namespace Android.BLE.Commands
                 {
                     if (string.Equals(obj.Device, DeviceAddress) &&
                         string.Equals(obj.Service, DeviceAddress) &&
-                        string.Equals(obj.Characteristic, Characteristic.Get8BitUuid()))
+                        string.Equals(obj.Characteristic, Characteristic.Get4BitUuid()))
                     {
                         OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
                     }
