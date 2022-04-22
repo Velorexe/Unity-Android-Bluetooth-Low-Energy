@@ -1,7 +1,4 @@
-﻿using Android.BLE.Extension;
-using System;
-
-namespace Android.BLE.Commands
+﻿namespace Android.BLE.Commands
 {
     public class SubscribeToCharacteristic : BleCommand
     {
@@ -54,7 +51,7 @@ namespace Android.BLE.Commands
         {
             if (string.Equals(obj.Command, "CharacteristicValueChanged"))
             {
-                if (obj.Characteristic.Length > 4)
+                if (_customGatt)
                 {
                     if (string.Equals(obj.Device, DeviceAddress) &&
                         string.Equals(obj.Service, DeviceAddress) &&
@@ -67,7 +64,7 @@ namespace Android.BLE.Commands
                 {
                     if (string.Equals(obj.Device, DeviceAddress) &&
                         string.Equals(obj.Service, DeviceAddress) &&
-                        string.Equals(obj.Characteristic, Characteristic.Get8BitUuid()))
+                        string.Equals(obj.Characteristic, "0000" + Characteristic + "-0000-1000-8000-00805f9b34fb"))
                     {
                         OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
                     }
