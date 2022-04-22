@@ -1,4 +1,6 @@
-﻿namespace Android.BLE.Commands
+﻿using Android.BLE.Extension;
+
+namespace Android.BLE.Commands
 {
     public class SubscribeToCharacteristic : BleCommand
     {
@@ -64,7 +66,7 @@
                 {
                     if (string.Equals(obj.Device, DeviceAddress) &&
                         string.Equals(obj.Service, DeviceAddress) &&
-                        string.Equals(obj.Characteristic, "0000" + Characteristic + "-0000-1000-8000-00805f9b34fb"))
+                        string.Equals(obj.Characteristic.Get8BitUuid(), Characteristic))
                     {
                         OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
                     }
