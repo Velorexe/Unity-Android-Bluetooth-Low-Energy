@@ -56,7 +56,7 @@ namespace Android.BLE.Commands
                 if (_customGatt)
                 {
                     if (string.Equals(obj.Device, DeviceAddress) &&
-                        string.Equals(obj.Service, DeviceAddress) &&
+                        string.Equals(obj.Service, Service) &&
                         string.Equals(obj.Characteristic, Characteristic))
                     {
                         OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
@@ -65,7 +65,7 @@ namespace Android.BLE.Commands
                 else
                 {
                     if (string.Equals(obj.Device, DeviceAddress) &&
-                        string.Equals(obj.Service, DeviceAddress) &&
+                        string.Equals(obj.Service.Get4BitUuid(), Service) &&
                         string.Equals(obj.Characteristic.Get4BitUuid(), Characteristic))
                     {
                         OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
