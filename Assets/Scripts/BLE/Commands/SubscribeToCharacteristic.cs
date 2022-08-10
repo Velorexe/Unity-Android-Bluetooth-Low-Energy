@@ -1,5 +1,4 @@
 ﻿using Android.BLE.Extension;
-using System;
 
 namespace Android.BLE.Commands
 {
@@ -14,15 +13,17 @@ namespace Android.BLE.Commands
 
         private readonly bool _customGatt = false;
 
-        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic) : base(true, true)
+        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, bool customGatt = false) : base(true, true)
         {
             DeviceAddress = deviceAddress;
 
             Service = service;
             Characteristic = characteristic;
+
+            _customGatt = customGatt;
         }
 
-        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, CharacteristicChanged onDataFound) : base(true, true)
+        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, CharacteristicChanged onDataFound, bool customGatt = false) : base(true, true)
         {
             DeviceAddress = deviceAddress;
 
@@ -30,6 +31,8 @@ namespace Android.BLE.Commands
             Characteristic = characteristic;
 
             OnCharacteristicChanged += onDataFound;
+
+            _customGatt = customGatt;
         }
 
         public override void Start()
@@ -50,10 +53,10 @@ namespace Android.BLE.Commands
         {
             if (string.Equals(obj.Command, "CharacteristicValueChanged"))
             {
-                if (obj.Characteristic.Length > 4)
+                if (_customGatt)
                 {
                     if (string.Equals(obj.Device, DeviceAddress) &&
-                        string.Equals(obj.Service, DeviceAddress) &&
+                        string.Equals(obj.Service, Service) &&
                         string.Equals(obj.Characteristic, Characteristic))
                     {
                         OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
@@ -62,8 +65,8 @@ namespace Android.BLE.Commands
                 else
                 {
                     if (string.Equals(obj.Device, DeviceAddress) &&
-                        string.Equals(obj.Service, DeviceAddress) &&
-                        string.Equals(obj.Characteristic, Characteristic.Get16BitUuid()))
+                        string.Equals(obj.Service.Get4BitUuid(), Service) &&
+                        string.Equals(obj.Characteristic.Get4BitUuid(), Characteristic))
                     {
                         OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
                     }
