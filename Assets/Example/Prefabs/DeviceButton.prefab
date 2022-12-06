@@ -508,6 +508,7 @@ MonoBehaviour:
   _deviceUuidText: {fileID: 3530289157025537728}
   _deviceNameText: {fileID: 3530289157676456754}
   _deviceButtonImage: {fileID: 3530289157807453845}
+  _deviceButtonText: {fileID: 3530289157824869069}
   _onConnectedColor: {r: 0, g: 0.6037736, b: 0.08843145, a: 1}
 --- !u!1 &3530289157824869071
 GameObject:
