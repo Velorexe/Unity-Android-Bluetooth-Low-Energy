@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using Android.BLE;
+﻿using Android.BLE;
 using Android.BLE.Commands;
+using System.Threading;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class DeviceButton : MonoBehaviour
 {
@@ -15,13 +16,22 @@ public class DeviceButton : MonoBehaviour
 
     [SerializeField]
     private Image _deviceButtonImage;
+    [SerializeField]
+    private Text _deviceButtonText;
 
     [SerializeField]
     private Color _onConnectedColor;
     private Color _previousColor;
 
+    private bool _isConnected = false;
+
+    private ConnectToDevice _connectCommand;
+    private SubscribeToCharacteristic _subscribeToCharacteristic;
+
     public void Show(string uuid, string name)
     {
+        _deviceButtonText.text = "Connect";
+
         _deviceUuid = uuid;
         _deviceName = name;
 
@@ -31,13 +41,23 @@ public class DeviceButton : MonoBehaviour
 
     public void Connect()
     {
-        BleManager.Instance.QueueCommand(new ConnectToDevice(_deviceUuid, OnConnected, OnDisconnected));
+        if (!_isConnected)
+        {
+            _connectCommand = new ConnectToDevice(_deviceUuid, OnConnected, OnDisconnected);
+            BleManager.Instance.QueueCommand(_connectCommand);
+        }
+        else
+        {
+            _subscribeToCharacteristic.Unsubscribe();
+            _connectCommand.Disconnect();
+        }
     }
 
     public void SubscribeToExampleService()
     {
         //Replace these Characteristics with YOUR device's characteristics
-        BleManager.Instance.QueueCommand(new SubscribeToCharacteristic(_deviceUuid, "1001", "2a19"));
+        _subscribeToCharacteristic = new SubscribeToCharacteristic(_deviceUuid, "1101", "2101");
+        BleManager.Instance.QueueCommand(_subscribeToCharacteristic);
     }
 
     private void OnConnected(string deviceUuid)
@@ -45,11 +65,17 @@ public class DeviceButton : MonoBehaviour
         _previousColor = _deviceButtonImage.color;
         _deviceButtonImage.color = _onConnectedColor;
 
+        _isConnected = true;
+        _deviceButtonText.text = "Disconnect";
+
         SubscribeToExampleService();
     }
 
     private void OnDisconnected(string deviceUuid)
     {
         _deviceButtonImage.color = _previousColor;
+
+        _isConnected = false;
+        _deviceButtonText.text = "Connect";
     }
 }
