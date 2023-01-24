@@ -1,6 +1,6 @@
 ﻿using Android.BLE;
 using Android.BLE.Commands;
-using System.Threading;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +13,8 @@ public class DeviceButton : MonoBehaviour
     private Text _deviceUuidText;
     [SerializeField]
     private Text _deviceNameText;
+    [SerializeField]
+    private Text _deviceServicesAmountText;
 
     [SerializeField]
     private Image _deviceButtonImage;
@@ -22,6 +24,8 @@ public class DeviceButton : MonoBehaviour
     [SerializeField]
     private Color _onConnectedColor;
     private Color _previousColor;
+
+    private List<string> _services = new List<string>();
 
     private bool _isConnected = false;
 
@@ -58,6 +62,12 @@ public class DeviceButton : MonoBehaviour
         //Replace these Characteristics with YOUR device's characteristics
         _subscribeToCharacteristic = new SubscribeToCharacteristic(_deviceUuid, "1101", "2101");
         BleManager.Instance.QueueCommand(_subscribeToCharacteristic);
+    }
+
+    public void AddService(string service)
+    {
+        _services.Add(service);
+        _deviceServicesAmountText.text = "Amount of services: " + _services.Count;
     }
 
     private void OnConnected(string deviceUuid)

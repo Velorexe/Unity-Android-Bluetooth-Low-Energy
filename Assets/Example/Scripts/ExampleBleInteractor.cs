@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using Android.BLE;
+﻿using Android.BLE;
 using Android.BLE.Commands;
-using UnityEngine.Android;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class ExampleBleInteractor : MonoBehaviour
 {
@@ -17,21 +17,23 @@ public class ExampleBleInteractor : MonoBehaviour
 
     private bool _isScanning = false;
 
+    private Dictionary<string, DeviceButton> _deviceButtons = new Dictionary<string, DeviceButton>();
+
     public void ScanForDevices()
     {
         if (!_isScanning)
         {
             _isScanning = true;
-            BleManager.Instance.QueueCommand(new DiscoverDevices(OnDeviceFound, _scanTime * 1000));
+            BleManager.Instance.QueueCommand(new DiscoverDevices(OnDeviceFound, OnDeviceServiceFound, _scanTime * 1000));
         }
     }
 
     private void Update()
     {
-        if(_isScanning)
+        if (_isScanning)
         {
             _scanTimer += Time.deltaTime;
-            if(_scanTimer > _scanTime)
+            if (_scanTimer > _scanTime)
             {
                 _scanTimer = 0f;
                 _isScanning = false;
@@ -39,9 +41,24 @@ public class ExampleBleInteractor : MonoBehaviour
         }
     }
 
-    private void OnDeviceFound(string name, string device)
+    private void OnDeviceFound(string device, string name)
     {
-        DeviceButton button = Instantiate(_deviceButton, _deviceList).GetComponent<DeviceButton>();
-        button.Show(name, device);
+        if (device != null)
+        {
+            DeviceButton button = Instantiate(_deviceButton, _deviceList).GetComponent<DeviceButton>();
+            button.Show(device, name);
+
+            _deviceButtons.Add(device, button);
+        }
+    }
+
+    private void OnDeviceServiceFound(string device, string service)
+    {
+        Debug.Log($"Found device's ({device}) service ({service})");
+        Debug.Log($"Dictionary is filled with {_deviceButtons.Count} entries");
+        if (device != null && _deviceButtons.ContainsKey(device))
+        {
+            _deviceButtons[device].AddService(service);
+        }
     }
 }
