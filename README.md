@@ -15,6 +15,8 @@ Support for basic BLE operations
 * Connecting to a Device
 * Writing to a Characteristic
 * Subscribing to a Characteristic
+* Reading from a Characteristic
+* Writing to a Characteristic
 
 ## How It Works
 By Utilizing the Android JNI and the capabilities for Android plugins on Unity to interact with the MonoBehaviour ecosystem, the .NET side inside Unity can communicate with the plugin, while the plugin can communicate back using the MonoBehaviour `SendMessage` method. The plugin contains a Singleton pattern that gets called from the `BleManager` script as an `AndroidJavaObject`. With this object you can call static methods and pass parameters, which takes care of communication from Unity to Android's BLE system. The plugin will then operate and send changes to Unity using the MonoBehaviour `SendMessage` method to pass JSON information to the `BleAdapter`.
