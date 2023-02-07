@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using System.Text;
 
 namespace Android.BLE.Commands
 {
@@ -10,7 +9,7 @@ namespace Android.BLE.Commands
         public readonly string Service;
         public readonly string Characteristic;
 
-        public readonly object StringData;
+        public readonly string Base64Data;
 
         public readonly bool CustomGatt;
 
@@ -20,7 +19,7 @@ namespace Android.BLE.Commands
             Service = serviceAddress;
             Characteristic = characteristicAddress;
 
-            StringData = data;
+            Base64Data = data;
 
             CustomGatt = customGatt;
 
@@ -33,7 +32,7 @@ namespace Android.BLE.Commands
             Service = serviceAddress;
             Characteristic = characteristicAddress;
 
-            StringData = data;
+            Base64Data = Encoding.UTF8.GetString(data);
 
             CustomGatt = customGatt;
 
@@ -43,7 +42,7 @@ namespace Android.BLE.Commands
         public override void Start()
         {
             string command = CustomGatt ? "writeToCustomGattCharacteristic" : "writeToGattCharacteristic";
-            BleManager.SendCommand(command, DeviceAddress, Service, Characteristic, StringData);
+            BleManager.SendCommand(command, DeviceAddress, Service, Characteristic, Base64Data);
         }
     }
 }
