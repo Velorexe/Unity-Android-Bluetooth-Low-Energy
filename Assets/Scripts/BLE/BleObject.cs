@@ -1,6 +1,5 @@
-﻿using System.Collections;
+﻿using System;
 using UnityEngine;
-using System;
 
 namespace Android.BLE
 {
@@ -35,13 +34,17 @@ namespace Android.BLE
         public bool HasError { get => hasError; }
         [SerializeField]
         private bool hasError = false;
-        
+
         public string ErrorMessage { get => errorMessage; }
         [SerializeField]
         private string errorMessage = string.Empty;
         #endregion
 
-        public byte[] GetByteMessage() => Convert.FromBase64String(command);
+        public string Base64Message { get => base64Message; }
+        [SerializeField]
+        private string base64Message = string.Empty;
+
+        public byte[] GetByteMessage() => Convert.FromBase64String(base64Message);
 
         public override string ToString() => JsonUtility.ToJson(this, true);
     }

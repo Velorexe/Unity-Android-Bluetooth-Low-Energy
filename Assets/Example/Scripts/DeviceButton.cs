@@ -1,6 +1,6 @@
 ﻿using Android.BLE;
 using Android.BLE.Commands;
-using System.Threading;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +26,7 @@ public class DeviceButton : MonoBehaviour
     private bool _isConnected = false;
 
     private ConnectToDevice _connectCommand;
-    private SubscribeToCharacteristic _subscribeToCharacteristic;
+    private ReadFromCharacteristic _readFromCharacteristic;
 
     public void Show(string uuid, string name)
     {
@@ -48,7 +48,6 @@ public class DeviceButton : MonoBehaviour
         }
         else
         {
-            _subscribeToCharacteristic.Unsubscribe();
             _connectCommand.Disconnect();
         }
     }
@@ -56,8 +55,11 @@ public class DeviceButton : MonoBehaviour
     public void SubscribeToExampleService()
     {
         //Replace these Characteristics with YOUR device's characteristics
-        _subscribeToCharacteristic = new SubscribeToCharacteristic(_deviceUuid, "1101", "2101");
-        BleManager.Instance.QueueCommand(_subscribeToCharacteristic);
+        _readFromCharacteristic = new ReadFromCharacteristic(_deviceUuid, "180c", "2a56", (byte[] value) =>
+        {
+            Debug.Log(Encoding.UTF8.GetString(value));
+        });
+        BleManager.Instance.QueueCommand(_readFromCharacteristic);
     }
 
     private void OnConnected(string deviceUuid)
