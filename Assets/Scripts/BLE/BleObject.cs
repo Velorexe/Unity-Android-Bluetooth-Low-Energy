@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Android.BLE
 {
+    /// <summary>
+    /// The JSON information that gets send from the Java library
+    /// </summary>
     [Serializable]
     public class BleObject
     {
