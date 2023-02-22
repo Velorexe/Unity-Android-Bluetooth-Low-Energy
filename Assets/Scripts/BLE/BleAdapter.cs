@@ -1,9 +1,11 @@
-﻿using UnityEngine;
-using System;
-using Android.BLE.Events;
+﻿using Android.BLE.Events;
+using UnityEngine;
 
 namespace Android.BLE
 {
+    /// <summary>
+    /// The adapter between the Java library and Unity's .NET environment.
+    /// </summary>
     public class BleAdapter : MonoBehaviour
     {
         // .NET Events
@@ -14,8 +16,15 @@ namespace Android.BLE
         public BleMessageReceived UnityOnMessageReceived;
         public BleErrorReceived UnityOnErrorReceived;
 
-        private void Awake() => gameObject.name = "BleAdapter";
+        /// <summary>
+        /// Sets the name to "BleAdapter" to receive messages from the Java library.
+        /// </summary>
+        private void Awake() => gameObject.name = nameof(BleAdapter);
 
+        /// <summary>
+        /// The method that the Java library will send their JSON messages to.
+        /// </summary>
+        /// <param name="jsonMessage">The <see cref="BleObject"/> in JSON format.</param>
         public void OnBleMessage(string jsonMessage)
         {
             BleObject obj = JsonUtility.FromJson<BleObject>(jsonMessage);
