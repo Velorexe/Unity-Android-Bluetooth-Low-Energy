@@ -202,7 +202,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 525964714}
   m_HandleRect: {fileID: 525964713}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1065,7 +1065,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 504503911}
   m_Direction: 2
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1148,14 +1148,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1162348554}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 060df4d41c6959541ba0cb2c4485fc8c, type: 3}
+  m_Script: {fileID: 11500000, guid: a8644091603251f40b7a78581647b46c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _adapter: {fileID: 1913812760}
-  InitializeOnAwake: 1
-  LogAllMessages: 1
-  UseUnityLog: 1
-  UseAndroidLog: 1
+  _initializeOnAwake: 1
+  _messageAdapter: {fileID: 1913812760}
 --- !u!1 &1302107549
 GameObject:
   m_ObjectHideFlags: 0
@@ -1321,15 +1318,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1913812758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c1281468f5d30740932c0044a3cbf8a, type: 3}
+  m_Script: {fileID: 11500000, guid: 6f45747c93929184ca4b9090c4c83f70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UnityOnMessageReceived:
-    m_PersistentCalls:
-      m_Calls: []
-  UnityOnErrorReceived:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &2015063611
 GameObject:
   m_ObjectHideFlags: 0

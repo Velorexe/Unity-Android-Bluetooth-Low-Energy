@@ -1,7 +1,5 @@
-﻿using UnityEngine;
-using Android.BLE;
-using Android.BLE.Commands;
-using UnityEngine.Android;
+﻿using Android.BLE;
+using UnityEngine;
 
 public class ExampleBleInteractor : MonoBehaviour
 {
@@ -22,16 +20,16 @@ public class ExampleBleInteractor : MonoBehaviour
         if (!_isScanning)
         {
             _isScanning = true;
-            BleManager.Instance.QueueCommand(new DiscoverDevices(OnDeviceFound, _scanTime * 1000));
+            BleManager.Instance.SearchForDevices(10 * 1000, OnDeviceFound);
         }
     }
 
     private void Update()
     {
-        if(_isScanning)
+        if (_isScanning)
         {
             _scanTimer += Time.deltaTime;
-            if(_scanTimer > _scanTime)
+            if (_scanTimer > _scanTime)
             {
                 _scanTimer = 0f;
                 _isScanning = false;
@@ -39,9 +37,9 @@ public class ExampleBleInteractor : MonoBehaviour
         }
     }
 
-    private void OnDeviceFound(string name, string device)
+    private void OnDeviceFound(BleDevice device)
     {
         DeviceButton button = Instantiate(_deviceButton, _deviceList).GetComponent<DeviceButton>();
-        button.Show(name, device);
+        button.Show(device);
     }
 }

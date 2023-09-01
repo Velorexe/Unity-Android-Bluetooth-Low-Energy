@@ -1,13 +1,9 @@
-﻿using Android.BLE.Commands;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Android.BLE
 {
-    /// <summary>
-    /// The Singleton manager that handles all BLE interactions for the plugin
-    /// </summary>
-    public class BleManager : MonoBehaviour
+    public class BleManager : MonoBehaviour, IBleNotify
     {
         /// <summary>
         /// Gets a Singleton instance of the <see cref="BleManager"/>
@@ -18,7 +14,9 @@ namespace Android.BLE
             get
             {
                 if (_instance != null)
+                {
                     return _instance;
+                }
                 else
                 {
                     CreateBleManagerObject();
@@ -28,262 +26,148 @@ namespace Android.BLE
         }
         private static BleManager _instance;
 
-        /// <summary>
-        /// Will be <see langword="true"/> if the <see cref="BleManager"/> is initialized.
-        /// </summary>
-        public static bool IsInitialized { get => _initialized; }
-        private static bool _initialized = false;
+        [SerializeField]
+        private bool _initializeOnAwake = true;
 
         [SerializeField]
-        private BleAdapter _adapter;
+        private BleMessageAdapter _messageAdapter;
 
-        /// <summary>
-        /// <see langword="true"/> if <see cref="Initialize"/> is called on Unity's <see cref="Awake"/>.
-        /// </summary>
-        [Tooltip("Use Initialize() if you want to Initialize manually")]
-        public bool InitializeOnAwake = true;
 
-        /// <summary>
-        /// <see langword="true"/> if all interactions with the <see cref="BleManager"/> should be logged.
-        /// </summary>
-        [Header("Logging")]
-        [Tooltip("Logs all messages coming through the BleManager")]
-        public bool LogAllMessages = false;
+        private static readonly System.Random _random = new System.Random();
 
-        /// <summary>
-        /// <see langword="true"/> if Android's log messages should be passed through <see cref="Debug.Log(object)"/>.
-        /// </summary>
-        [Tooltip("Passes messages through to the Unity Debug.Log system")]
-        public bool UseUnityLog = true;
+        private readonly Dictionary<string, TaskDescription> _callbackNotifiers = new Dictionary<string, TaskDescription>();
 
-        /// <summary>
-        /// <see langword="true"/> if Unity's log messages should be passed through LogCat.
-        /// </summary>
-        [Tooltip("Passes messages through to Android's Logcat")]
-        public bool UseAndroidLog = false;
+        private static AndroidJavaObject _javaBleManager = null;
 
-        /// <summary>
-        /// The Java library's BleManager hook.
-        /// </summary>
-        internal static AndroidJavaObject _bleLibrary = null;
+        private OnDeviceFound _onDeviceFound = null;
 
-        /// <summary>
-        /// Incoming queue of <see cref="BleCommand"/> that have yet to be processed.
-        /// </summary>
-        private readonly Queue<BleCommand> _commandQueue = new Queue<BleCommand>();
-
-        /// <summary>
-        /// The stack of parallel running <see cref="BleCommand"/>.
-        /// </summary>
-        private readonly List<BleCommand> _parrallelStack = new List<BleCommand>();
-
-        /// <summary>
-        /// The active non-parallel or continuous <see cref="BleCommand"/>.
-        /// </summary>
-        private static BleCommand _activeCommand = null;
-
-        /// <summary>
-        /// Timer to track the <see cref="_activeCommand"/>'s runtime.
-        /// </summary>
-        private static float _activeTimer = 0f;
-
-        private void Awake()
+        void Awake()
         {
             _instance = this;
 
-            if (InitializeOnAwake)
-                Initialize();
-
-            _adapter.OnMessageReceived += OnBleMessageReceived;
-            _adapter.OnErrorReceived += OnErrorReceived;
-        }
-
-        private void Update()
-        {
-            _activeTimer += Time.deltaTime;
-
-            // Checks if the _activeCommand has timed out
-            if (_activeCommand != null && _activeTimer > _activeCommand.Timeout)
+            if (_initializeOnAwake)
             {
-                CheckForLog("Timed Out: " + _activeCommand + " - " + _activeCommand.Timeout);
-
-                // Resets timers and ends the current _activeCommand
-                _activeTimer = 0f;
-                _activeCommand.EndOnTimeout();
-
-                if (_commandQueue.Count > 0)
-                {
-                    // Sets a new _activeCommand
-                    _activeCommand = _commandQueue.Dequeue();
-                    _activeCommand?.Start();
-
-                    if (_activeCommand != null)
-                        CheckForLog("Executing new Command: " + _activeCommand.GetType().Name);
-                }
-                else
-                    _activeCommand = null;
+                Initialize();
             }
         }
 
-        /// <summary>
-        /// Initialized the <see cref="BleManager"/> instance.
-        /// Sets up the Java Library hooks and prepares a <see cref="BleAdapter"/> to receive messages.
-        /// </summary>
         public void Initialize()
         {
-            if (!_initialized)
+            #region Adapter
+            if (_messageAdapter == null)
             {
-                // Creates a new Singleton instance
-                if (_instance == null)
-                    CreateBleManagerObject();
-
-                // Prepares a BleAdapter to receive messages
-                #region Adapter
-                if (_adapter == null)
+                _messageAdapter = FindObjectOfType<BleMessageAdapter>();
+                if (_messageAdapter == null)
                 {
-                    _adapter = FindObjectOfType<BleAdapter>();
-                    if (_adapter == null)
-                    {
-                        GameObject bleAdapter = new GameObject(nameof(BleAdapter));
-                        bleAdapter.transform.SetParent(Instance.transform);
+                    GameObject bleAdapter = new GameObject(nameof(BleMessageAdapter));
+                    bleAdapter.transform.SetParent(transform);
 
-                        _adapter = bleAdapter.AddComponent<BleAdapter>();
-                    }
-                }
-                #endregion
-
-                // Binds to the com.velorexe.unityandroidble.UnityAndroidBLE Singleton
-                #region Android Library
-                if (_bleLibrary == null)
-                {
-                    AndroidJavaClass librarySingleton = new AndroidJavaClass("com.velorexe.unityandroidble.UnityAndroidBLE");
-                    _bleLibrary = librarySingleton.CallStatic<AndroidJavaObject>("getInstance");
-                }
-                #endregion
-            }
-        }
-
-        /// <summary>
-        /// Ends all currently running <see cref="BleCommand"/> and
-        /// disposes of the Java library hooks
-        /// </summary>
-        public void DeInitialize()
-        {
-            foreach (BleCommand command in _parrallelStack)
-                command.End();
-
-            _bleLibrary?.Dispose();
-
-            if (_adapter != null)
-                Destroy(_adapter.gameObject);
-        }
-
-        /// <summary>
-        /// Gets called when a new message is received by the <see cref="BleAdapter"/>.
-        /// </summary>
-        /// <param name="obj">The <see cref="BleObject"/> that's received from the Java library.</param>
-        private void OnBleMessageReceived(BleObject obj)
-        {
-            CheckForLog(JsonUtility.ToJson(obj, true));
-
-            // Checks if the _activeCommand consumes the BleObject
-            if (_activeCommand != null && _activeCommand.CommandReceived(obj))
-            {
-                _activeCommand.End();
-
-                // Queues a new _activeCommand if it has consumed the BleObject
-                // Since the command is not continious or parallel, it should be cleared if it's purpose is fulfilled
-                if (_commandQueue.Count > 0)
-                {
-                    _activeCommand = _commandQueue.Dequeue();
-                    _activeCommand?.Start();
-
-                    if (_activeCommand != null)
-                        CheckForLog("Executing new Command: " + _activeCommand.GetType().Name);
-                }
-                else
-                    _activeCommand = null;
-            }
-
-            // Run through the parallel stack, remove the commands that have consumed the BleObject
-            for (int i = 0; i < _parrallelStack.Count; i++)
-            {
-                if (_parrallelStack[i].CommandReceived(obj))
-                {
-                    _parrallelStack[i].End();
-                    _parrallelStack.RemoveAt(i);
+                    _messageAdapter = bleAdapter.AddComponent<BleMessageAdapter>();
                 }
             }
-        }
 
-        /// <summary>
-        /// Queues a new <see cref="BleCommand"/> to execute.
-        /// </summary>
-        /// <param name="command">The <see cref="BleCommand"/> that should be handled by the <see cref="BleManager"/>.</param>
-        public void QueueCommand(BleCommand command)
-        {
-            CheckForLog("Queueing Command: " + command.GetType().Name);
-            if (command.RunParallel || command.RunContiniously)
+            _messageAdapter.OnMessageReceived += OnBleMessageReceived;
+            #endregion
+
+            #region Android Library
+            if (_javaBleManager == null)
             {
-                _parrallelStack.Add(command);
-                command.Start();
+                AndroidJavaClass unityAndroidBle = new AndroidJavaClass("com.velorexe.unityandroidble.UnityAndroidBLE");
+                _javaBleManager = unityAndroidBle.CallStatic<AndroidJavaObject>("getInstance");
             }
-            else
+            #endregion
+        }
+
+        public void SearchForDevices(int scanPeriod, OnDeviceFound onDeviceFound)
+        {
+            _onDeviceFound = onDeviceFound;
+            BleTask task = new BleTask("searchForBleDevices", scanPeriod);
+
+            SendTask(task, this, runsContiniously: true);
+        }
+
+        internal string SendTask(BleTask task, IBleNotify receiver, bool runsContiniously = false)
+        {
+            string id = GenerateTaskId();
+
+            List<object> parameters = new List<object> { id };
+            parameters.AddRange(task.Parameters);
+
+            Debug.Log("Queueing task with ID: " + id);
+
+            _callbackNotifiers.Add(id, new TaskDescription(receiver, runsContiniously));
+            _javaBleManager.Call(task.MethodDefinition, parameters.ToArray());
+
+            return id;
+        }
+
+        internal void RemoveTaskFromStack(string id)
+        {
+            if (!_callbackNotifiers.ContainsKey(id))
             {
-                if (_activeCommand == null)
-                {
-                    _activeTimer = 0f;
-
-                    _activeCommand = command;
-                    _activeCommand.Start();
-                }
-                else
-                    _commandQueue.Enqueue(command);
+                return;
             }
+
+            _callbackNotifiers.Remove(id);
         }
 
-        private void OnErrorReceived(string errorMessage)
+        private void OnBleMessageReceived(BleMessage msg)
         {
-            CheckForLog(errorMessage);
+            if (!_callbackNotifiers.ContainsKey(msg.ID))
+            {
+                Debug.LogError(
+                    $"No OnBleMessage with ID {msg.ID} is in the BleManager's stack.");
+                return;
+            }
+
+            // Executes the function tied to the ID
+            _callbackNotifiers[msg.ID].Notifier.OnMessage(msg);
         }
 
-        private static void CheckForLog(string logMessage)
-        {
-            if (Instance.UseUnityLog)
-                Debug.LogWarning(logMessage);
-            if (Instance.UseAndroidLog)
-                AndroidLog(logMessage);
-        }
-
-        public static void AndroidLog(string message)
-        {
-            if (_initialized)
-                _bleLibrary?.CallStatic("androidLog", message);
-        }
-
-        /// <summary>
-        /// Calls a method from the Java library that matches the <paramref name="command"/>.
-        /// </summary>
-        /// <param name="command">The method name inside the Java library.</param>
-        /// <param name="parameters">Any additional parameters that the Java method defines.</param>
-        internal static void SendCommand(string command, params object[] parameters)
-        {
-            if (Instance.LogAllMessages)
-                CheckForLog("Calling Command: " + command);
-            _bleLibrary?.Call(command, parameters);
-        }
+        private string GenerateTaskId() => _random.Next().ToString("x");
 
         /// <summary>
         /// Creates a new <see cref="GameObject"/> instance for the <see cref="BleManager"/> to attach to.
         /// </summary>
         private static void CreateBleManagerObject()
         {
-            GameObject managerObject = new GameObject();
-            managerObject.name = "BleManager";
+            BleManager manager = FindObjectOfType<BleManager>();
 
-            managerObject.AddComponent<BleManager>();
+            if (manager == null)
+            {
+                GameObject managerObject = new GameObject();
+                managerObject.name = nameof(BleManager);
+
+                manager = managerObject.AddComponent<BleManager>();
+            }
         }
 
-        private void OnDestroy() => DeInitialize();
+        public void OnMessage(BleMessage msg)
+        {
+            switch (msg.Command)
+            {
+                case "deviceFound":
+                    BleDevice device = new BleDevice(msg.Device, msg.Name);
+                    _onDeviceFound.Invoke(device);
+                    break;
+                case "searchStop":
+                    RemoveTaskFromStack(msg.ID);
+                    break;
+            }
+        }
+
+        private struct TaskDescription
+        {
+            public IBleNotify Notifier;
+            public bool RunContinously;
+
+            public TaskDescription(IBleNotify notifier, bool runContiniously)
+            {
+                Notifier = notifier;
+                RunContinously = runContiniously;
+            }
+        }
     }
+
+    public delegate void OnDeviceFound(BleDevice device);
 }
