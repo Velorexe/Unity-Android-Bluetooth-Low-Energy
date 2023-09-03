@@ -1,4 +1,5 @@
 ﻿using Android.BLE;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -50,6 +51,11 @@ public class DeviceButton : MonoBehaviour
 
         _isConnected = true;
         _deviceButtonText.text = "Disconnect";
+
+        device.GetCharacteristic("180C", "2A56").Subscribe((value) =>
+        {
+            Debug.Log(Encoding.UTF8.GetString(value));
+        });
     }
 
     private void OnDisconnected(BleDevice device)

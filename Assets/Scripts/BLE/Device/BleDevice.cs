@@ -14,7 +14,7 @@ namespace Android.BLE
 
         public bool IsConnected { get; internal set; }
 
-        private readonly Dictionary<string, BleGattService> _servicesMap;
+        private readonly Dictionary<string, BleGattService> _servicesMap = new Dictionary<string, BleGattService>();
 
         private string _taskId = string.Empty;
 
@@ -58,6 +58,8 @@ namespace Android.BLE
                 serviceUuid = "0000" + serviceUuid + "-0000-1000-8000-00805f9b34fb";
             }
 
+            serviceUuid = serviceUuid.ToLower();
+
             if (!_servicesMap.ContainsKey(serviceUuid))
             {
                 return null;
@@ -68,18 +70,13 @@ namespace Android.BLE
 
         public BleGattCharacteristic GetCharacteristic(string serviceUuid, string characteristicUuid)
         {
-            // If a shorthand UUID is passed
-            if (serviceUuid.Length == 4)
-            {
-                serviceUuid = "0000" + serviceUuid + "-0000-1000-8000-00805f9b34fb";
-            }
-
-            if (!_servicesMap.ContainsKey(serviceUuid))
+            BleGattService service = GetService(serviceUuid);
+            if (service == null)
             {
                 return null;
             }
 
-            return _servicesMap[serviceUuid].GetCharacteristic(characteristicUuid);
+            return service.GetCharacteristic(characteristicUuid);
         }
 
         public void OnMessage(BleMessage msg)
@@ -90,7 +87,6 @@ namespace Android.BLE
                 {
                     case "connectedToDevice":
                         IsConnected = true;
-                        _onConnected.Invoke(this);
                         break;
                     case "disconnectedFromDevice":
                         IsConnected = false;
@@ -102,7 +98,7 @@ namespace Android.BLE
                         break;
 
                     case "discoveredServicesAndCharacteristics":
-                        ServiceJsonPayload[] receivedServices = JsonUtility.FromJson<ServiceJsonPayload[]>(msg.JsonData);
+                        ServiceJsonPayload[] receivedServices = JsonUtility.FromJson<Wrapper<ServiceJsonPayload>>(msg.JsonData).Data;
                         BleGattService[] service = new BleGattService[receivedServices.Length];
 
                         for (int i = 0; i < receivedServices.Length; i++)
@@ -111,15 +107,22 @@ namespace Android.BLE
                             for (int j = 0; j < receivedServices[i].Characteristics.Length; j++)
                             {
                                 characteristics[j] = new BleGattCharacteristic(
-                                    receivedServices[i].Characteristics[j].UUID,
+                                    receivedServices[i].Characteristics[j].UUID.ToLower(),
                                     receivedServices[i].Characteristics[j].Permissions,
                                     receivedServices[i].Characteristics[j].Properties,
                                     receivedServices[i].Characteristics[j].WriteTypes);
                             }
 
-                            service[i] = new BleGattService(receivedServices[i].UUID, characteristics);
+                            service[i] = new BleGattService(receivedServices[i].UUID.ToLower(), characteristics, this);
+                            _servicesMap.Add(receivedServices[i].UUID, service[i]);
+
+                            foreach (BleGattCharacteristic characteristic in characteristics)
+                            {
+                                characteristic.SetParent(service[i]);
+                            }
                         }
 
+                        _onConnected.Invoke(this);
                         break;
                 }
             }
@@ -155,6 +158,13 @@ namespace Android.BLE
                 [SerializeField]
                 private int writeTypes;
             }
+        }
+
+        private class Wrapper<T>
+        {
+            public T[] Data { get { return data; } }
+            [SerializeField]
+            private T[] data;
         }
     }
 

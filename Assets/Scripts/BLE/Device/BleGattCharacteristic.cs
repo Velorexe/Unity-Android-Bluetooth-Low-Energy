@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Android.BLE
@@ -16,11 +15,11 @@ namespace Android.BLE
 
         public CharacteristicFormats Format { get; } = CharacteristicFormats.UNKNOWN;
 
-        public CharacteristicPermissions[] Permissions { get; } = Array.Empty<CharacteristicPermissions>();
+        public CharacteristicPermissions Permissions { get; } = CharacteristicPermissions.UNKNOWN;
 
-        public CharacteristicProperties[] Properties { get; } = Array.Empty<CharacteristicProperties>();
+        public CharacteristicProperties Properties { get; } = CharacteristicProperties.UNKNOWN;
 
-        public CharacteristicWriteTypes[] WriteTypes { get; } = Array.Empty<CharacteristicWriteTypes>();
+        public CharacteristicWriteTypes WriteTypes { get; } = CharacteristicWriteTypes.UNKNOWN;
 
 
         private Dictionary<string, OnReadValue> _onReadValueTasks = new Dictionary<string, OnReadValue>();
@@ -33,15 +32,14 @@ namespace Android.BLE
         internal BleGattCharacteristic(string uuid, int permissions, int properties, int writeTypes)
         {
             UUID = uuid;
+            Permissions = (CharacteristicPermissions)permissions;
+            Properties = (CharacteristicProperties)properties;
+            WriteTypes = (CharacteristicWriteTypes)writeTypes;
+        }
 
-            int[] parsedValues = permissions.GetDivisors(256);
-            Permissions = parsedValues.Select(p => (CharacteristicPermissions)p).ToArray();
-
-            parsedValues = properties.GetDivisors(128);
-            Properties = parsedValues.Select(p => (CharacteristicProperties)p).ToArray();
-
-            parsedValues = writeTypes.GetDivisors(4);
-            WriteTypes = parsedValues.Select(w => (CharacteristicWriteTypes)w).ToArray();
+        public void SetParent(BleGattService service)
+        {
+            ParentService = service;
         }
 
 
@@ -97,12 +95,12 @@ namespace Android.BLE
             if (ParentDevice.IsConnected)
             {
                 BleTask task = new BleTask(
-                    "writeToCharacteristic",
+                    "subscribeToCharacteristic",
                     ParentService.ParentDevice.MacAddress,
                     ParentService.UUID,
                     UUID);
 
-                string id = BleManager.Instance.SendTask(task, this);
+                string id = BleManager.Instance.SendTask(task, this, runsContiniously: true);
 
                 if (onValue != null)
                 {
@@ -115,27 +113,57 @@ namespace Android.BLE
             }
         }
 
+        public void Unsubscribe()
+        {
+            if (ParentDevice.IsConnected)
+            {
+                BleTask task = new BleTask(
+                    "unsubscribeFromCharacteristic",
+                    ParentDevice.MacAddress,
+                    ParentService.UUID,
+                    UUID);
+
+                BleManager.Instance.SendTask(task, this);
+            }
+            else
+            {
+                Debug.LogError($"A 'Unsubscribe' from characteristic {UUID} was executed, but device {ParentDevice.MacAddress} isn't connected.");
+            }
+        }
+
         void IBleNotify.OnMessage(BleMessage msg)
         {
-            if (_onReadValueTasks.ContainsKey(msg.ID))
+            if (msg.HasError)
             {
-                _onReadValueTasks[msg.ID]?.Invoke(!msg.HasError, msg.Data);
-                _onReadValueTasks.Remove(msg.ID);
-
-                BleManager.Instance.RemoveTaskFromStack(msg.ID);
+                Debug.LogError(msg.ErrorMessage);
             }
 
-            if (_onWriteValueTasks.ContainsKey(msg.ID))
+            switch (msg.Command)
             {
-                _onWriteValueTasks[msg.ID]?.Invoke(!msg.HasError);
-                _onWriteValueTasks.Remove(msg.ID);
+                case "readFromCharacteristic":
+                    if (_onReadValueTasks.ContainsKey(msg.ID))
+                    {
+                        _onReadValueTasks[msg.ID]?.Invoke(!msg.HasError, Convert.FromBase64String(msg.Base64Data));
+                        _onReadValueTasks.Remove(msg.ID);
 
-                BleManager.Instance.RemoveTaskFromStack(msg.ID);
-            }
+                        BleManager.Instance.RemoveTaskFromStack(msg.ID);
+                    }
+                    break;
+                case "writeToCharacteristic":
+                    if (_onWriteValueTasks.ContainsKey(msg.ID))
+                    {
+                        _onWriteValueTasks[msg.ID]?.Invoke(!msg.HasError);
+                        _onWriteValueTasks.Remove(msg.ID);
 
-            if (_onSubscribeValueTasks.ContainsKey(msg.ID))
-            {
-                _onSubscribeValueTasks[msg.ID]?.Invoke(msg.Data);
+                        BleManager.Instance.RemoveTaskFromStack(msg.ID);
+                    }
+                    break;
+                case "characteristicValueChanged":
+                    if (!msg.HasError && _onSubscribeValueTasks.ContainsKey(msg.ID))
+                    {
+                        _onSubscribeValueTasks[msg.ID]?.Invoke(Convert.FromBase64String(msg.Base64Data));
+                    }
+                    break;
             }
         }
     }
@@ -162,8 +190,11 @@ namespace Android.BLE
         FORMAT_SFLOAT = 50,
     }
 
+    [Flags]
     public enum CharacteristicPermissions
     {
+        UNKNOWN = -1,
+
         PERMISSION_READ = 1,
 
         PERMISSION_READ_ENCRYPTED = 2,
@@ -178,8 +209,11 @@ namespace Android.BLE
         PERMISSION_WRITE_SIGNED_MITM = 256,
     }
 
+    [Flags]
     public enum CharacteristicProperties
     {
+        UNKNOWN = -1,
+
         PROPERTY_BROADCAST = 1,
 
         PROPERTY_READ = 2,
@@ -195,8 +229,11 @@ namespace Android.BLE
         PROPERTY_EXTENDED_PROPS = 128,
     }
 
+    [Flags]
     public enum CharacteristicWriteTypes
     {
+        UNKNOWN = -1,
+
         WRITE_TYPE_NO_RESPONSE = 1,
         WRITE_TYPE_DEFAULT = 2,
         WRITE_TYPE_SIGNED = 4,

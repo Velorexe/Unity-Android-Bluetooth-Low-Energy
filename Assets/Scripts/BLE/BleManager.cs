@@ -86,6 +86,20 @@ namespace Android.BLE
             SendTask(task, this, runsContiniously: true);
         }
 
+
+        public void SearchForDevicesWithFilter(
+            int scanPeriod,
+            OnDeviceFound onDeviceFound,
+            string deviceUuid = "",
+            string deviceName = "",
+            string serviceUuid = "")
+        {
+            _onDeviceFound = onDeviceFound;
+            BleTask task = new BleTask("searchForBleDevicesWithFilter", scanPeriod, deviceUuid, deviceName, serviceUuid);
+
+            SendTask(task, this, runsContiniously: true);
+        }
+
         internal string SendTask(BleTask task, IBleNotify receiver, bool runsContiniously = false)
         {
             string id = GenerateTaskId();

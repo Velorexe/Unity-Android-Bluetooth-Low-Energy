@@ -14,10 +14,11 @@ namespace Android.BLE
         private Dictionary<string, BleGattCharacteristic> _characteristicsMap = new Dictionary<string, BleGattCharacteristic>();
 
 
-        internal BleGattService(string uuid, BleGattCharacteristic[] characteristics)
+        internal BleGattService(string uuid, BleGattCharacteristic[] characteristics, BleDevice device)
         {
             UUID = uuid;
             Characteristics = characteristics;
+            ParentDevice = device;
 
             foreach (BleGattCharacteristic characteristic in characteristics)
             {
@@ -33,6 +34,8 @@ namespace Android.BLE
             {
                 characteristicUuid = "0000" + characteristicUuid + "-0000-1000-8000-00805f9b34fb";
             }
+
+            characteristicUuid = characteristicUuid.ToLower();
 
             if (!_characteristicsMap.ContainsKey(characteristicUuid))
             {

@@ -19,7 +19,7 @@ namespace Android.BLE
         /// <param name="jsonMessage">The <see cref="BleObject"/> in JSON format.</param>
         public void OnBleMessage(string jsonMessage)
         {
-            Debug.Log("Received JSON Message:");
+            Debug.Log("Raw jsonmessage: " + jsonMessage);
             BleMessage obj = JsonUtility.FromJson<BleMessage>(jsonMessage);
             Debug.Log(JsonUtility.ToJson(obj, true));
             if (obj.HasError)

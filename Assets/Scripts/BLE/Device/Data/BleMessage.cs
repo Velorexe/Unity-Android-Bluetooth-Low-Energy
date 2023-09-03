@@ -22,9 +22,9 @@ namespace Android.BLE
         [SerializeField]
         private string name = string.Empty;
 
-        public byte[] Data { get { return data; } }
+        public string Base64Data { get { return base64Data; } }
         [SerializeField]
-        private byte[] data = Array.Empty<byte>();
+        private string base64Data = string.Empty;
 
         public string JsonData { get { return jsonData; } }
         [SerializeField]
