@@ -16,11 +16,11 @@ namespace Android.BLE
 
         private readonly Dictionary<string, BleGattService> _servicesMap = new Dictionary<string, BleGattService>();
 
-        private string _taskId = string.Empty;
+        private string _connectionTaskId = string.Empty;
 
         private OnDeviceConnected _onConnected;
         private OnDeviceDisconnected _onDisconnected;
-
+        private OnMtuSizeChanged _onMtuSizeChanged;
 
         internal BleDevice(string macAddress, string name)
         {
@@ -28,14 +28,13 @@ namespace Android.BLE
             Name = name;
         }
 
-
         public void Connect(OnDeviceConnected onConnected = null, OnDeviceDisconnected onDisconnected = null)
         {
             _onConnected = onConnected;
             _onDisconnected = onDisconnected;
 
             BleTask task = new BleTask("connectToBleDevice", MacAddress, (int)Transportations.TRANSPORT_LE);
-            _taskId = BleManager.Instance.SendTask(task, this);
+            _connectionTaskId = BleManager.Instance.SendTask(task, this);
         }
 
         public void Connect(
@@ -47,7 +46,15 @@ namespace Android.BLE
             _onDisconnected = onDisconnected;
 
             BleTask task = new BleTask("connectToBleDevice", MacAddress, (int)transport);
-            _taskId = BleManager.Instance.SendTask(task, this);
+            _connectionTaskId = BleManager.Instance.SendTask(task, this);
+        }
+
+        public void RequestMtuSize(int mtuSize, OnMtuSizeChanged onMtuSizeChanged = null)
+        {
+            _onMtuSizeChanged = onMtuSizeChanged;
+
+            BleTask task = new BleTask("requestMtuSize", MacAddress, mtuSize);
+            BleManager.Instance.SendTask(task, this);
         }
 
         public BleGattService GetService(string serviceUuid)
@@ -81,7 +88,7 @@ namespace Android.BLE
 
         public void OnMessage(BleMessage msg)
         {
-            if (msg.ID == _taskId && !msg.HasError)
+            if (!msg.HasError)
             {
                 switch (msg.Command)
                 {
@@ -92,7 +99,7 @@ namespace Android.BLE
                         IsConnected = false;
                         _onDisconnected.Invoke(this);
 
-                        BleManager.Instance.RemoveTaskFromStack(_taskId);
+                        BleManager.Instance.RemoveTaskFromStack(_connectionTaskId);
                         break;
                     case "connectingToDevice":
                         break;
@@ -124,7 +131,14 @@ namespace Android.BLE
 
                         _onConnected.Invoke(this);
                         break;
+                    case "requestMtuSize":
+                        _onMtuSizeChanged?.Invoke(this, Convert.ToInt32(msg.Base64Data));
+                        break;
                 }
+            }
+            else
+            {
+                Debug.LogError(msg.ErrorMessage);
             }
         }
 
@@ -171,6 +185,8 @@ namespace Android.BLE
     public delegate void OnDeviceConnected(BleDevice device);
 
     public delegate void OnDeviceDisconnected(BleDevice device);
+
+    public delegate void OnMtuSizeChanged(BleDevice device, int mtuSize);
 
     public enum Transportations
     {
