@@ -21,6 +21,7 @@ namespace Android.BLE
         private OnDeviceConnected _onConnected;
         private OnDeviceDisconnected _onDisconnected;
         private OnMtuSizeChanged _onMtuSizeChanged;
+        private OnRssiDataFound _onRssiDataFound;
 
         internal BleDevice(string macAddress, string name)
         {
@@ -54,6 +55,14 @@ namespace Android.BLE
             _onMtuSizeChanged = onMtuSizeChanged;
 
             BleTask task = new BleTask("requestMtuSize", MacAddress, mtuSize);
+            BleManager.Instance.SendTask(task, this);
+        }
+
+        public void GetRssi(OnRssiDataFound onRssiDataFound)
+        {
+            _onRssiDataFound = onRssiDataFound;
+
+            BleTask task = new BleTask("getRssiForDevice", MacAddress);
             BleManager.Instance.SendTask(task, this);
         }
 
@@ -134,6 +143,9 @@ namespace Android.BLE
                     case "requestMtuSize":
                         _onMtuSizeChanged?.Invoke(this, Convert.ToInt32(msg.Base64Data));
                         break;
+                    case "getRssiForDevice":
+                        _onRssiDataFound?.Invoke(this, short.Parse(msg.Base64Data));
+                        break;
                 }
             }
             else
@@ -187,6 +199,8 @@ namespace Android.BLE
     public delegate void OnDeviceDisconnected(BleDevice device);
 
     public delegate void OnMtuSizeChanged(BleDevice device, int mtuSize);
+
+    public delegate void OnRssiDataFound(BleDevice device, short rssi);
 
     public enum Transportations
     {

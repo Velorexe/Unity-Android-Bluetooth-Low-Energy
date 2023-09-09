@@ -12,6 +12,8 @@ public class DeviceButton : MonoBehaviour
     private Text _deviceUuidText;
     [SerializeField]
     private Text _deviceNameText;
+    [SerializeField]
+    private Text _deviceRssiText;
 
     [SerializeField]
     private Image _deviceButtonImage;
@@ -26,6 +28,8 @@ public class DeviceButton : MonoBehaviour
 
     private BleDevice _bleDevice;
 
+    private float _rssiTimer = 0f;
+
     public void Show(BleDevice device)
     {
         _deviceButtonText.text = "Connect";
@@ -37,6 +41,16 @@ public class DeviceButton : MonoBehaviour
         _deviceNameText.text = device.Name;
 
         _bleDevice = device;
+    }
+
+    public void Update()
+    {
+        _rssiTimer += Time.deltaTime;
+        if (_rssiTimer > 0.5f)
+        {
+            _rssiTimer = 0f;
+            _bleDevice.GetRssi((_, rsi) => _deviceRssiText.text = rsi + " dBm");
+        }
     }
 
     public void Connect()

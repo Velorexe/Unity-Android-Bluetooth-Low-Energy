@@ -15,7 +15,7 @@ public class ExampleBleInteractor : MonoBehaviour
         if (!_isScanning)
         {
             _isScanning = true;
-            BleManager.Instance.SearchForDevicesWithFilter(10 * 1000, OnDeviceFound, deviceName: "Testing Device");
+            BleManager.Instance.SearchForDevices(10 * 1000, OnDeviceFound);
         }
     }
 

@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "f1335419",
         "name": "com.com.velorexe.UnityBluetoothLowEnergy",
-        "processId": 18638,
+        "processId": 26528,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -162,6 +162,36 @@
             "deviceId": "f1335419",
             "name": "com.com.velorexe.UnityBluetoothLowEnergy",
             "processId": 18638,
+            "exited": false
+        },
+        {
+            "deviceId": "f1335419",
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 20782,
+            "exited": false
+        },
+        {
+            "deviceId": "f1335419",
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 21909,
+            "exited": false
+        },
+        {
+            "deviceId": "f1335419",
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 23415,
+            "exited": false
+        },
+        {
+            "deviceId": "f1335419",
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 25707,
+            "exited": false
+        },
+        {
+            "deviceId": "f1335419",
+            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
+            "processId": 26528,
             "exited": false
         }
     ],
