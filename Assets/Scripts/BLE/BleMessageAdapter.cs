@@ -4,6 +4,9 @@ namespace Android.BLE
 {
     public class BleMessageAdapter : MonoBehaviour
     {
+        [SerializeField]
+        private bool _logBleMessages = false;
+
         // .NET Events
         public event MessageReceived OnMessageReceived;
         public event ErrorReceived OnErrorReceived;
@@ -19,9 +22,14 @@ namespace Android.BLE
         /// <param name="jsonMessage">The <see cref="BleObject"/> in JSON format.</param>
         public void OnBleMessage(string jsonMessage)
         {
-            Debug.Log("Raw jsonmessage: " + jsonMessage);
             BleMessage obj = JsonUtility.FromJson<BleMessage>(jsonMessage);
-            Debug.Log(JsonUtility.ToJson(obj, true));
+
+            if (_logBleMessages)
+            {
+                LogMessage("Received JSON message: ");
+                LogMessage(jsonMessage);
+            }
+
             if (obj.HasError)
             {
                 OnErrorReceived?.Invoke(obj.ErrorMessage);

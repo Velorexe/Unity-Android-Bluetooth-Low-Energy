@@ -6,16 +6,36 @@ namespace Android.BLE
 {
     public class BleDevice : IBleNotify
     {
+        /// <summary>
+        /// The MAC address of the <see cref="BleDevice"/>.
+        /// </summary>
         public string MacAddress { get; } = string.Empty;
 
+        /// <summary>
+        /// The name of the <see cref="BleDevice"/>.
+        /// </summary>
         public string Name { get; } = string.Empty;
 
-        public BleGattService[] Services { get; } = Array.Empty<BleGattService>();
+        /// <summary>
+        /// A collection of all the <see cref="BleGattService"/> on the <see cref="BleDevice"/>.
+        /// Getting a <see cref="BleGattService"/> should be done using the <see cref="GetService(string)"/> method.
+        /// </summary>
+        public BleGattService[] Services { get; internal set; } = Array.Empty<BleGattService>();
 
+        /// <summary>
+        /// Reflects if the <see cref="BleDevice"/> is connected or not.
+        /// </summary>
         public bool IsConnected { get; internal set; }
 
+
+        /// <summary>
+        /// A private collection that maps the UUID to the <see cref="BleGattService"/>.
+        /// </summary>
         private readonly Dictionary<string, BleGattService> _servicesMap = new Dictionary<string, BleGattService>();
 
+        /// <summary>
+        /// A private string that keeps track of the Task ID used to connect to the device.
+        /// </summary>
         private string _connectionTaskId = string.Empty;
 
         private OnDeviceConnected _onConnected;
@@ -29,6 +49,13 @@ namespace Android.BLE
             Name = name;
         }
 
+        /// <summary>
+        /// Connect to the <see cref="BleDevice"/>.
+        /// By will connect with the <see cref="Transportations.TRANSPORT_LE"/> type.
+        /// <para>[Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothDevice#connectGatt(android.content.Context,%20boolean,%20android.bluetooth.BluetoothGattCallback)"/>]</para>
+        /// </summary>
+        /// <param name="onConnected">Is called once the <see cref="BleDevice"/> is connected.</param>
+        /// <param name="onDisconnected">Is called if the <see cref="BleDevice"/> gets disconnected or connecting fails.</param>
         public void Connect(OnDeviceConnected onConnected = null, OnDeviceDisconnected onDisconnected = null)
         {
             _onConnected = onConnected;
@@ -38,6 +65,14 @@ namespace Android.BLE
             _connectionTaskId = BleManager.Instance.SendTask(task, this);
         }
 
+        /// <summary>
+        /// Connect to the <see cref="BleDevice"/> using a specific <see cref="Transportations"/> type.
+        /// By default the <see cref="Transportations"/> type will be <see cref="Transportations.TRANSPORT_LE"/>
+        /// <para>[Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothDevice#connectGatt(android.content.Context,%20boolean,%20android.bluetooth.BluetoothGattCallback,%20int))"/>]</para>
+        /// </summary>
+        /// <param name="transport">The <see cref="Transportations"/> type that should be used when connecting to the <see cref="BleDevice"/>,.</param>
+        /// <param name="onConnected">Is called once the <see cref="BleDevice"/> is connected.</param>
+        /// <param name="onDisconnected">Is called if the <see cref="BleDevice"/> gets disconnected or connecting fails.</param>
         public void Connect(
             Transportations transport,
             OnDeviceConnected onConnected = null,
@@ -50,6 +85,12 @@ namespace Android.BLE
             _connectionTaskId = BleManager.Instance.SendTask(task, this);
         }
 
+        /// <summary>
+        /// Request the <see cref="BleDevice"/>'s MTU Size to be bigger or smaller.
+        /// <para>[Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothGatt#requestMtu(int)"/>]</para>
+        /// </summary>
+        /// <param name="mtuSize">The requested size that the MTU buffer should be.</param>
+        /// <param name="onMtuSizeChanged">A callback that returns the MTU size that the <see cref="BleDevice"/> has after your request.</param>
         public void RequestMtuSize(int mtuSize, OnMtuSizeChanged onMtuSizeChanged = null)
         {
             _onMtuSizeChanged = onMtuSizeChanged;
@@ -58,6 +99,12 @@ namespace Android.BLE
             BleManager.Instance.SendTask(task, this);
         }
 
+        /// <summary>
+        /// Gets the RSSI <see cref="short"/> if it's available fo the <see cref="BleDevice"/>.
+        /// <para>[Calls: <see href="https://developer.android.com/reference/android/content/Intent#getShortExtra(java.lang.String,%20short)"/></para>
+        /// </summary>
+        /// <param name="onRssiDataFound">A callback that returns the RSSI of the <see cref="BleDevice"/>.
+        /// Returns <see cref="short.MinValue"/> if RSSI is not available for the <see cref="BleDevice"/>.</param>
         public void GetRssi(OnRssiDataFound onRssiDataFound)
         {
             _onRssiDataFound = onRssiDataFound;
@@ -66,6 +113,12 @@ namespace Android.BLE
             BleManager.Instance.SendTask(task, this);
         }
 
+        /// <summary>
+        /// Returns the <see cref="BleGattService"/> if it's f.ound, else it returns <see langword="null"/>.
+        /// Supports both 16-bit UUID's and 128-bit UUID's
+        /// </summary>
+        /// <param name="serviceUuid">The UUID of the <see cref="BleGattService"/>.</param>
+        /// <returns>Returns the <see cref="BleGattService"/> if it's found, else it returns <see langword="null"/>.</returns>
         public BleGattService GetService(string serviceUuid)
         {
             // If a shorthand UUID is passed
@@ -84,6 +137,12 @@ namespace Android.BLE
             return _servicesMap[serviceUuid];
         }
 
+        /// <summary>
+        /// Returns the <see cref="BleGattCharacteristic"/> if it's f.ound, else it returns <see langword="null"/>.
+        /// Supports both 16-bit UUID's and 128-bit UUID's
+        /// </summary>
+        /// <param name="serviceUuid">The UUID of the <see cref="BleGattCharacteristic"/>.</param>
+        /// <returns>Returns the <see cref="BleGattCharacteristic"/> if it's found, else it returns <see langword="null"/>.</returns>
         public BleGattCharacteristic GetCharacteristic(string serviceUuid, string characteristicUuid)
         {
             BleGattService service = GetService(serviceUuid);
@@ -95,6 +154,10 @@ namespace Android.BLE
             return service.GetCharacteristic(characteristicUuid);
         }
 
+        /// <summary>
+        /// Used internaly to handle the <see cref="BleMessage"/> received from the Java library.
+        /// </summary>
+        /// <param name="msg">The converted message from the Java library.</param>
         public void OnMessage(BleMessage msg)
         {
             if (!msg.HasError)
@@ -137,6 +200,8 @@ namespace Android.BLE
                                 characteristic.SetParent(service[i]);
                             }
                         }
+
+                        Services = service;
 
                         _onConnected.Invoke(this);
                         break;

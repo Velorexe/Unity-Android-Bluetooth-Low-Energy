@@ -6,19 +6,43 @@ namespace Android.BLE
 {
     public class BleGattCharacteristic : IBleNotify
     {
+        /// <summary>
+        /// The UUID of the <see cref="BleGattCharacteristic"/>.
+        /// </summary>
         public string UUID { get; } = string.Empty;
 
+        /// <summary>
+        /// The parent <see cref="BleGattService"/> that this <see cref="BleGattCharacteristic"/> resides under.
+        /// </summary>
         public BleGattService ParentService = null;
 
+        /// <summary>
+        /// The <see cref="BleDevice"/> that this <see cref="BleGattCharacteristic"/> is part of.
+        /// </summary>
         public BleDevice ParentDevice { get { return ParentService.ParentDevice; } }
 
-
+        /// <summary>
+        /// The <see cref="CharacteristicFormats"/> of the <see cref="BleGattCharacteristic"/>.
+        /// Defaults to <see cref="CharacteristicFormats.UNKNOWN"/>.
+        /// </summary>
         public CharacteristicFormats Format { get; } = CharacteristicFormats.UNKNOWN;
 
+        /// <summary>
+        /// The <see cref="CharacteristicPermissions"/> of the <see cref="BleGattCharacteristic"/>.
+        /// Defaults to <see cref="CharacteristicPermissions.UNKNOWN"/>.
+        /// </summary>
         public CharacteristicPermissions Permissions { get; } = CharacteristicPermissions.UNKNOWN;
 
+        /// <summary>
+        /// The <see cref="CharacteristicProperties"/> of the <see cref="BleGattCharacteristic"/>.
+        /// Defaults to <see cref="CharacteristicProperties.UNKNOWN"/>.
+        /// </summary>
         public CharacteristicProperties Properties { get; } = CharacteristicProperties.UNKNOWN;
 
+        /// <summary>
+        /// The <see cref="CharacteristicWriteTypes"/> of the <see cref="BleGattCharacteristic"/>.
+        /// Defaults to <see cref="CharacteristicWriteTypes.UNKNOWN"/>.
+        /// </summary>
         public CharacteristicWriteTypes WriteTypes { get; } = CharacteristicWriteTypes.UNKNOWN;
 
 
@@ -37,12 +61,17 @@ namespace Android.BLE
             WriteTypes = (CharacteristicWriteTypes)writeTypes;
         }
 
-        public void SetParent(BleGattService service)
+        internal void SetParent(BleGattService service)
         {
             ParentService = service;
         }
 
-
+        /// <summary>
+        /// Reads the <see cref="byte[]"/> value from the <see cref="BleGattCharacteristic"/>.
+        /// <para>[API_LEVEL 33+ Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothGatt#readCharacteristic(android.bluetooth.BluetoothGattCharacteristic)"/>]</para>
+        /// <para>[API_LEVEL 21-32 Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothGattCharacteristic?hl=en#getValue()"/>]</para>
+        /// </summary>
+        /// <param name="onRead">A callback that notifies if the value is succesfully read.</param>
         public void Read(OnReadValue onRead = null)
         {
             if (ParentDevice.IsConnected)
@@ -66,6 +95,13 @@ namespace Android.BLE
             }
         }
 
+        /// <summary>
+        /// Writes a <see cref="byte[]"/> to the <see cref="BleGattCharacteristic"/>.
+        /// <para>[API_LEVEL 33+ Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothGatt#writeCharacteristic(android.bluetooth.BluetoothGattCharacteristic,%20byte[],%20int)"/>]</para>
+        /// <para>[API_LEVEL 21-32 Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothGattCharacteristic?hl=en#setValue(byte[])"/>]</para>
+        /// </summary>
+        /// <param name="data">The <see cref="byte[]"/> that should be written to the <see cref="BleGattCharacteristic"/>.</param>
+        /// <param name="onWrite">A callback that notifies if the value is succesfully written to the <see cref="BleGattCharacteristic"/>.</param>
         public void Write(byte[] data, OnWriteValue onWrite = null)
         {
             if (ParentDevice.IsConnected)
@@ -90,6 +126,11 @@ namespace Android.BLE
             }
         }
 
+        /// <summary>
+        /// Subscribes to the <see cref="BleGattCharacteristic"/>, giving a <see cref="OnSubscribeValue"/> callback once a new value is published.
+        /// <para>[Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothGatt#setCharacteristicNotification(android.bluetooth.BluetoothGattCharacteristic,%20boolean)"/></para>
+        /// </summary>
+        /// <param name="onValue">A callback that notifies if a new value is published on the <see cref="BleGattCharacteristic"/>.</param>
         public void Subscribe(OnSubscribeValue onValue = null)
         {
             if (ParentDevice.IsConnected)
@@ -113,6 +154,11 @@ namespace Android.BLE
             }
         }
 
+        /// <summary>
+        /// Unsubscribes from the <see cref="BleGattCharacteristic"/>.
+        /// Adviced to do if you're not using the values from the <see cref="BleGattCharacteristic"/> anymore.
+        /// <para>[Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothGatt#setCharacteristicNotification(android.bluetooth.BluetoothGattCharacteristic,%20boolean)"/></para>
+        /// </summary>
         public void Unsubscribe()
         {
             if (ParentDevice.IsConnected)
@@ -131,6 +177,10 @@ namespace Android.BLE
             }
         }
 
+        /// <summary>
+        /// Used internaly to handle the <see cref="BleMessage"/> received from the Java library.
+        /// </summary>
+        /// <param name="msg">The converted message from the Java library.</param>
         void IBleNotify.OnMessage(BleMessage msg)
         {
             if (msg.HasError)
