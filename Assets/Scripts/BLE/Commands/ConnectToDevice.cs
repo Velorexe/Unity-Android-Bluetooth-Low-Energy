@@ -113,12 +113,12 @@
                             OnConnected?.Invoke(obj.Device);
                         }
                         break;
-                    case "ServiceDiscovered":
+                    case "DiscoveredService":
                         {
                             OnServiceDiscovered?.Invoke(obj.Device, obj.Service);
                             break;
                         }
-                    case "CharacteristicDiscovered":
+                    case "DiscoveredCharacteristic":
                         {
                             OnCharacteristicDiscovered?.Invoke(obj.Device, obj.Service, obj.Characteristic);
                             break;
