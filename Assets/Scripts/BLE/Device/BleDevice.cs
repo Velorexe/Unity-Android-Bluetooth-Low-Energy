@@ -86,6 +86,16 @@ namespace Android.BLE
         }
 
         /// <summary>
+        /// Disconnect from the <see cref="BleDevice"/>.
+        /// <para>[Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothGatt#disconnect()"/></para>
+        /// </summary>
+        public void Disconnect()
+        {
+            BleTask task = new BleTask("disconnectFromBleDevice", MacAddress);
+            _connectionTaskId = BleManager.Instance.SendTask(task, this);
+        }
+
+        /// <summary>
         /// Request the <see cref="BleDevice"/>'s MTU Size to be bigger or smaller.
         /// <para>[Calls: <see href="https://developer.android.com/reference/android/bluetooth/BluetoothGatt#requestMtu(int)"/>]</para>
         /// </summary>
