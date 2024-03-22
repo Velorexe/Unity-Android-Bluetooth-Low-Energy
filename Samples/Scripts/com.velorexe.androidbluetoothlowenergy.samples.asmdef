@@ -1,0 +1,16 @@
+{
+    "name": "com.velorexe.androidbluetoothlowenergy.samples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e5079c9cdf1a83a499e1da1875c7fe10"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
