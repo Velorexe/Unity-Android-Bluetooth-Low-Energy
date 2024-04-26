@@ -30,7 +30,7 @@ namespace Android.BLE.UnityEditor
 
             public bool foldOutOpen;
 
-            public AndroidSdkVersions minSdkVersion;
+            public int minSdkVersion;
 
             public bool Exists(string manifest){
                 return regex.IsMatch(manifest);
@@ -52,13 +52,13 @@ namespace Android.BLE.UnityEditor
                 regex = new Regex("uses-permission[^>]+android:name=\"android.permission.BLUETOOTH_SCAN\""),
                 description = "Bluetooth Scan ( API 31 and above )",
                 line = "<uses-permission android:name=\"android.permission.BLUETOOTH_SCAN\" android:usesPermissionFlags=\"neverForLocation\" />",
-                minSdkVersion = AndroidSdkVersions.AndroidApiLevel31
+                minSdkVersion = 31
             },
             new AndroidPermission(){
                 regex = new Regex("uses-permission[^>]+android:name=\"android.permission.BLUETOOTH_CONNECT\""),
                 description = "Bluetooth Connect ( API 31 and above )",
                 line = "<uses-permission android:name=\"android.permission.BLUETOOTH_CONNECT\" />",
-                minSdkVersion = AndroidSdkVersions.AndroidApiLevel31
+                minSdkVersion = 31
             },
         };
         
@@ -117,7 +117,7 @@ namespace Android.BLE.UnityEditor
 #endif
 
         public static void RefreshFiles(){
-            assetsAndroidManifestPath = Path.Join(Application.dataPath,"Plugins/Android/AndroidManifest.xml");
+            assetsAndroidManifestPath = Path.Combine(ProjectPath(),"Plugins/Android/AndroidManifest.xml");
             
             hasExistingManifest = File.Exists(assetsAndroidManifestPath);
             if(hasExistingManifest){
@@ -139,7 +139,7 @@ namespace Android.BLE.UnityEditor
                 EditorGUILayout.LabelField("AndroidManifest.xml file found",bold);
                 EditorGUILayout.LabelField("Manifest Bluetooth permissions:");
                 foreach(var androidPermission in m_androidPermission){
-                    if(PlayerSettings.Android.targetSdkVersion<androidPermission.minSdkVersion){
+                    if((int)PlayerSettings.Android.targetSdkVersion<androidPermission.minSdkVersion){
                         continue;
                     }
                     bool hasPerm = androidPermission.Exists(existingManifestContents);
@@ -164,10 +164,12 @@ namespace Android.BLE.UnityEditor
             {
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("No existing AndroidManifest.xml file found",bold);
-                
+                         
                 if(GUILayout.Button("Use template AndroidManifest.xml")){
+                    Directory.CreateDirectory(Path.Combine(ProjectPath(),"Plugins/Android"));
                     File.Copy(packageAndroidManifestPath,assetsAndroidManifestPath);
                     RefreshFiles();
+                    AssetDatabase.Refresh();
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -179,6 +181,10 @@ namespace Android.BLE.UnityEditor
             
         }
 
+        static string ProjectPath()
+        {
+            return Path.Combine(System.IO.Directory.GetCurrentDirectory(),"Assets");
+        }
 
     }
 }
