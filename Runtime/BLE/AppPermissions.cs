@@ -58,7 +58,7 @@ namespace Android.BLE
         {
             StartCoroutine(CheckPermissionsCoroutine());
         }
-
+#if UNITY_2020_1_OR_NEWER
         IEnumerator CheckPermissionsCoroutine()
         {
             Dictionary<string, PermissionData> permissions = new Dictionary<string, PermissionData>();
@@ -146,6 +146,17 @@ namespace Android.BLE
                 return version.GetStatic<int>("SDK_INT");
             }
         }
+
+#else
+    /*
+        Bypass runtime permissions if running on 2019.4 or earlier
+    */
+    IEnumerator CheckPermissionsCoroutine()
+    {
+        allPermissionsGrantedEvent.Invoke();
+    }
+#endif
+    
     }
 
 }
