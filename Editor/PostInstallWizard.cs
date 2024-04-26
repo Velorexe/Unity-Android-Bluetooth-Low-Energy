@@ -84,10 +84,17 @@ namespace Android.BLE.UnityEditor
             Debug.Log(PlayerSettings.Android.targetSdkVersion);
             
             Debug.Log(PlayerSettings.Android.minSdkVersion.ToString());
-            EditorGUI.hyperLinkClicked += OnHyperLinkClicked;
+            
+            GUIHyperlinkClick();
 
             m_tickImage = AssetDatabase.LoadAssetAtPath<Texture2D>( tickPath );
             m_crossImage = AssetDatabase.LoadAssetAtPath<Texture2D>( crossPath );
+        }
+
+#if UNITY_2020_1_OR_NEWER
+        void GUIHyperlinkClick()
+        {
+            EditorGUI.hyperLinkClicked += OnHyperLinkClicked;
         }
 
         void OnDestroy()
@@ -102,6 +109,12 @@ namespace Android.BLE.UnityEditor
             }
             Application.OpenURL( args.hyperLinkData["href"] );
         }
+#else
+        void GUIHyperlinkClick()
+        {
+            //not availble before 2020.1
+        }
+#endif
 
         public static void RefreshFiles(){
             assetsAndroidManifestPath = Path.Join(Application.dataPath,"Plugins/Android/AndroidManifest.xml");

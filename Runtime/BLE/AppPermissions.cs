@@ -154,6 +154,7 @@ namespace Android.BLE
     IEnumerator CheckPermissionsCoroutine()
     {
         allPermissionsGrantedEvent.Invoke();
+        yield break;
     }
 #endif
     
