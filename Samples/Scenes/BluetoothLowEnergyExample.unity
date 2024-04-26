@@ -207,7 +207,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 525964713}
   m_Direction: 0
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1368,8 +1368,44 @@ MonoBehaviour:
   m_permissions:
   - name: android.permission.BLUETOOTH_SCAN
     exitOnUserDenied: 1
+    minApiVersion: 31
   - name: android.permission.BLUETOOTH_CONNECT
     exitOnUserDenied: 1
+    minApiVersion: 31
+  allPermissionsGrantedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2062572098}
+        m_TargetAssemblyTypeName: ExampleBleInteractor, com.velorexe.androidbluetoothlowenergy.samples
+        m_MethodName: ScanForDevices
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2063471663}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  permissionDeniedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  somePermissionsDeniedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  _checkPermissionsOnStart: 0
 --- !u!4 &1386588426
 Transform:
   m_ObjectHideFlags: 0
@@ -1692,7 +1728,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.347, g: 0.347, b: 0.347, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1711,10 +1747,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2062572098}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: ScanForDevices
+      - m_Target: {fileID: 1386588425}
+        m_TargetAssemblyTypeName: AppPermissions, tech.scentient.vrtest
+        m_MethodName: CheckPermissions
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2063471663}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
