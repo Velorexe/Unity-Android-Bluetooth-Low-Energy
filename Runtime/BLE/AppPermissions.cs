@@ -8,6 +8,10 @@ using UnityEngine.Events;
 namespace Android.BLE
 {
 
+    /// <summary>
+    /// Discovering and conecting to BLE devices on Android requires rumtime permssions as of API 26
+    /// This class will prompt with the correct permissions, if neccessary, and will fire an event, once permissions have been granted
+    /// </summary>
     public class AppPermissions : MonoBehaviour
     {
         [System.Serializable]
@@ -63,7 +67,6 @@ namespace Android.BLE
         {
             Dictionary<string, PermissionData> permissions = new Dictionary<string, PermissionData>();
             int apiVersion = getAPIVersion();
-            //Debug.Log($"getAPIVersion={getAPIVersion()}");
 
             foreach (var permission in m_permissions)
             {
@@ -99,16 +102,10 @@ namespace Android.BLE
             };
             Callbacks.PermissionGranted += (string permissionName) =>
             {
-                Debug.LogWarning($"Permission {permissionName} granted");
+                Debug.Log($"Permission {permissionName} granted");
                 permissions[permissionName].gotPermissionResponse = true;
                 permissions[permissionName].userAuthorizedPermission = true;
             };
-
-
-            // Debug.Log($"Requesting permissions");
-            // foreach(var permission in permissions.Keys){
-            //      Debug.Log($"{permission}");
-            // } 
 
             Permission.RequestUserPermissions(permissions.Keys.ToArray(), Callbacks);
 
@@ -120,7 +117,6 @@ namespace Android.BLE
             if (permissions.All(pair => pair.Value.userAuthorizedPermission))
             {
                 Debug.Log("Permissions granted");
-
                 allPermissionsGrantedEvent.Invoke();
             }
             else
