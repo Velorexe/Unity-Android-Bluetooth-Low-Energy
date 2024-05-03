@@ -66,10 +66,9 @@ namespace Android.BLE.Commands
             DeviceAddress = deviceAddress;
             Service = serviceAddress;
             Characteristic = characteristicAddress;
-
-            Base64Data = Encoding.UTF8.GetString(data);
-
             CustomGatt = customGatt;
+            //currently in the Java lib UnityAndroidBLE.writeToCustomGattCharacteristic uses base64 encoded data only for CustomGattCharacteristics 
+            Base64Data = CustomGatt ? System.Convert.ToBase64String(data) : Encoding.ASCII.GetString(data);
 
             _timeout = 1f;
         }
