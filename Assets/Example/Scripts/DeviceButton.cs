@@ -55,7 +55,11 @@ public class DeviceButton : MonoBehaviour
     public void SubscribeToExampleService()
     {
         //Replace these Characteristics with YOUR device's characteristics
-        _readFromCharacteristic = new ReadFromCharacteristic(_deviceUuid, "180c", "2a56", (byte[] value) =>
+        //_readFromCharacteristic = new ReadFromCharacteristic(_deviceUuid, "180c", "2a56", (byte[] value) =>
+        //{
+        //    Debug.Log(Encoding.UTF8.GetString(value));
+        //});
+        _readFromCharacteristic = new ReadFromCharacteristic(_deviceUuid, "2A37", "2A38", (byte[] value) =>
         {
             Debug.Log(Encoding.UTF8.GetString(value));
         });

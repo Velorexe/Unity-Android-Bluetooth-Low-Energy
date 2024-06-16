@@ -1,50 +1,13 @@
 {
     "m_SelectedDeviceId": "BH902JA28Y",
-    "m_SelectedPackage": {
-        "deviceId": "BH902JA28Y",
-        "name": "com.com.velorexe.UnityBluetoothLowEnergy",
-        "processId": 25742,
+    "m_SelectedProcess": {
+        "deviceId": "",
+        "name": "",
+        "processId": 0,
         "exited": false
     },
     "m_SelectedPriority": 0,
-    "m_KnownPackagesForSerialization": [
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
-            "processId": 21045,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
-            "processId": 21317,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
-            "processId": 22088,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
-            "processId": 25288,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
-            "processId": 25546,
-            "exited": true
-        },
-        {
-            "deviceId": "BH902JA28Y",
-            "name": "com.com.velorexe.UnityBluetoothLowEnergy",
-            "processId": 25742,
-            "exited": false
-        }
-    ],
+    "m_KnownProcessesForSerialization": [],
     "m_Tags": {
         "m_Entries": [
             {
@@ -77,8 +40,11 @@
             }
         ]
     },
+    "m_ExtraWindowState": {
+        "Type": 0,
+        "Height": 0.0
+    },
     "m_MemoryViewerState": {
-        "MemoryWindowHeight": 300.0,
         "MemoryWindowWidth": 170.0,
         "MemoryTypeEnabled": [
             true,
@@ -93,9 +59,35 @@
             true
         ],
         "MemoryGroup": 2,
-        "Behavior": 0
+        "AutoCapture": true
     },
-    "m_Filter": "",
-    "m_FilterIsRegularExpression": false,
-    "m_SymbolPaths": []
+    "m_FilterOptions": {
+        "m_Filter": "",
+        "m_UseRegularExpressions": false,
+        "m_MatchCase": false
+    },
+    "m_SymbolPaths": [],
+    "m_CaptureVideoSettings": {
+        "TimeLimitEnabled": false,
+        "TimeLimit": 180,
+        "VideoSizeEnabled": false,
+        "VideoSizeX": 1280,
+        "VideoSizeY": 720,
+        "BitRateEnabled": false,
+        "BitRateK": 20000,
+        "DisplayIdEnabled": false,
+        "DisplayId": ""
+    },
+    "m_InputSettings": {
+        "ShiftModifier": false,
+        "SendText": "",
+        "PosixKillSignal": 0,
+        "TargetProcess": {
+            "deviceId": "",
+            "name": "",
+            "processId": 0,
+            "exited": false
+        }
+    },
+    "m_AutoScroll": 0
 }
