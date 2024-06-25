@@ -55,7 +55,6 @@ namespace Android.BLE
             {
                 CheckPermissions();
             }
-
         }
 
         public void CheckPermissions()
@@ -65,6 +64,11 @@ namespace Android.BLE
 #if UNITY_2020_1_OR_NEWER
         IEnumerator CheckPermissionsCoroutine()
         {
+            #if UNITY_EDITOR
+                allPermissionsGrantedEvent.Invoke();
+                yield break;
+            #endif
+
             Dictionary<string, PermissionData> permissions = new Dictionary<string, PermissionData>();
             int apiVersion = getAPIVersion();
 
