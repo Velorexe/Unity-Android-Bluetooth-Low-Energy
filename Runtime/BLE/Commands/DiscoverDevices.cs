@@ -16,6 +16,7 @@ namespace Android.BLE.Commands
         /// The .NET event that indicates that a new BLE device is discovered.
         /// </summary>
         public readonly DeviceDiscovered OnDeviceDiscovered;
+        public readonly Action OnFinishedDiscovering;
 
         /// <summary>
         /// The time that this command will search BLE devices for.
@@ -31,27 +32,37 @@ namespace Android.BLE.Commands
             _discoverTime = discoverTime;
         }
 
-        /// <summary>
-        /// Discovers BLE devices using the given time in milliseconds and
-        /// passes the UUID of the discovered devices.
-        /// </summary>
-        /// <param name="onDeviceDiscovered">The <see cref="DeviceDiscovered"/> that will trigger if a device is discovered.</param>
-        /// <param name="discoverTime">The amount of searching time in milliseconds that. Defaults to <see cref="StandardDiscoverTime"/>.</param>
         public DiscoverDevices(Action<string, string> onDeviceDiscovered, int discoverTime = StandardDiscoverTime) : base(true, false)
         {
             OnDeviceDiscovered += new DeviceDiscovered(onDeviceDiscovered);
             _discoverTime = discoverTime;
         }
 
+        /// <summary>
+        /// Discovers BLE devices using the given time in milliseconds and
+        /// passes the UUID of the discovered devices.
+        /// </summary>
+        /// <param name="onDeviceDiscovered">The <see cref="DeviceDiscovered"/> that will trigger if a device is discovered.</param>
+        /// <param name="discoverTime">The amount of searching time in milliseconds that. Defaults to <see cref="StandardDiscoverTime"/>.</param>
+        public DiscoverDevices(Action<string, string> onDeviceDiscovered, Action onFinishedDiscovering, int discoverTime = StandardDiscoverTime) : base(true, false)
+        {
+            OnDeviceDiscovered += new DeviceDiscovered(onDeviceDiscovered);
+            OnFinishedDiscovering = onFinishedDiscovering;
+            _discoverTime = discoverTime;
+        }
+
         public override void Start() => BleManager.SendCommand("scanBleDevices", _discoverTime);
 
-        public override void End() => BleManager.SendCommand("stopScanBleDevices");
+        public override void End(){
+            OnFinishedDiscovering?.Invoke();                
+            BleManager.SendCommand("stopScanBleDevices");            
+        }
 
         public override bool CommandReceived(BleObject obj)
         {
             if (string.Equals(obj.Command, "DiscoveredDevice"))
                 OnDeviceDiscovered?.Invoke(obj.Device, obj.Name);
-
+            
             return string.Equals(obj.Command, "FinishedDiscovering");
         }
 
