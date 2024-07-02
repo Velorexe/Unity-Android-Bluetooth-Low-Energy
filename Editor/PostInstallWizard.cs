@@ -17,11 +17,9 @@ namespace Android.BLE.UnityEditor
         static bool hasExistingManifest;
         static string existingManifestContents;
 
-        readonly string tickPath = $"Packages/{packageName}/icons/2705.png";
-        readonly string crossPath = $"Packages/{packageName}/icons/274c.png";
 
-        Texture2D m_tickImage;
-        Texture2D m_crossImage;
+        Texture m_SuccessImage;
+        Texture m_FailImage;
 
         private class AndroidPermission {
             public Regex regex;
@@ -87,8 +85,19 @@ namespace Android.BLE.UnityEditor
             
             GUIHyperlinkClick();
 
-            m_tickImage = AssetDatabase.LoadAssetAtPath<Texture2D>( tickPath );
-            m_crossImage = AssetDatabase.LoadAssetAtPath<Texture2D>( crossPath );
+
+            GetIcons();
+
+        }
+
+        void GetIcons()
+        {
+            #if UNITY_2023_1_OR_NEWER
+                m_SuccessImage = EditorGUIUtility.IconContent("TestPassed").image; //"GreenCheckmark", 
+            #else
+                m_SuccessImage = EditorGUIUtility.IconContent("TestPassed").image; //"GreenCheckmark", 
+            #endif 
+            m_FailImage = EditorGUIUtility.IconContent("console.erroricon").image;
         }
 
 #if UNITY_2020_1_OR_NEWER
@@ -151,7 +160,8 @@ namespace Android.BLE.UnityEditor
                     var rect = EditorGUILayout.GetControlRect(GUILayout.Width(height-4));
                     rect.height = height-4;
                     rect.y+=2;
-                    GUI.DrawTexture(rect,hasPerm ? m_tickImage : m_crossImage);
+                                        
+                    GUI.DrawTexture(rect,hasPerm ? m_SuccessImage : m_FailImage);
                     EditorGUILayout.EndHorizontal();
                     if(androidPermission.foldOutOpen){
                         EditorGUILayout.TextField(androidPermission.line);
@@ -174,7 +184,7 @@ namespace Android.BLE.UnityEditor
                 EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.GetControlRect();
-            EditorGUILayout.TextField("Click here <a href=\"https://developer.android.com/develop/connectivity/bluetooth/bt-permissions\">more information on bluetooth permissions</a>", style);
+            EditorGUILayout.TextField("Click here for <a href=\"https://developer.android.com/develop/connectivity/bluetooth/bt-permissions\">more information on bluetooth permissions</a>", style);
 
             
 
