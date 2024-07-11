@@ -28,9 +28,11 @@ namespace Android.BLE
 
         [SerializeField]
         PermissionData[] m_permissions = new PermissionData[]{
-        new PermissionData(){name="android.permission.BLUETOOTH_SCAN",minApiVersion=31,exitOnUserDenied=true,userAuthorizedPermission=false},
-        new PermissionData(){name="android.permission.BLUETOOTH_CONNECT",minApiVersion=31,exitOnUserDenied=true,userAuthorizedPermission=false}
-    };
+            new PermissionData(){name="android.permission.BLUETOOTH_SCAN",minApiVersion=31,exitOnUserDenied=true,userAuthorizedPermission=false},
+            new PermissionData(){name="android.permission.BLUETOOTH_CONNECT",minApiVersion=31,exitOnUserDenied=true,userAuthorizedPermission=false}
+        };
+
+        const int MIN_SDK_RUNTIME_PERMISSION = 23;
 
         public UnityEvent allPermissionsGrantedEvent;
         public UnityEvent<string> permissionDeniedEvent;
@@ -53,24 +55,44 @@ namespace Android.BLE
         {
             if (_checkPermissionsOnStart)
             {
-                CheckPermissions();
+                RequestPermissions();
             }
         }
 
-        public void CheckPermissions()
+        public bool AllPermissionsGranted
+        {
+            get
+            {
+                int apiVersion = getAPIVersion();
+                if (apiVersion < MIN_SDK_RUNTIME_PERMISSION)
+                {
+                    return true;
+                }
+                return m_permissions.All(perm => perm.userAuthorizedPermission || (apiVersion < perm.minApiVersion) || Permission.HasUserAuthorizedPermission(perm.name));
+            }
+        }
+
+        public void RequestPermissions()
         {
             StartCoroutine(CheckPermissionsCoroutine());
         }
 #if UNITY_2020_1_OR_NEWER
         IEnumerator CheckPermissionsCoroutine()
         {
-            #if UNITY_EDITOR
-                allPermissionsGrantedEvent.Invoke();
-                yield break;
-            #endif
+#if UNITY_EDITOR
+            yield return null;
+            allPermissionsGrantedEvent.Invoke();
+            yield break;
+#endif
 
             Dictionary<string, PermissionData> permissions = new Dictionary<string, PermissionData>();
             int apiVersion = getAPIVersion();
+
+            if (apiVersion < MIN_SDK_RUNTIME_PERMISSION)
+            {
+                allPermissionsGrantedEvent.Invoke();
+                yield break;
+            }
 
             foreach (var permission in m_permissions)
             {
@@ -78,12 +100,17 @@ namespace Android.BLE
                 {
                     continue;
                 }
-                if (permission.userAuthorizedPermission = Permission.HasUserAuthorizedPermission(name))
+                if (permission.userAuthorizedPermission = Permission.HasUserAuthorizedPermission(permission.name))
                 {
                     continue;
                 }
                 permissions[permission.name] = permission;
 
+            }
+            if (permissions.Count == 0)
+            {
+                allPermissionsGrantedEvent?.Invoke();
+                yield break;
             }
             var Callbacks = new PermissionCallbacks();
             Callbacks.PermissionDenied += (string permissionName) =>
@@ -153,11 +180,12 @@ namespace Android.BLE
     */
     IEnumerator CheckPermissionsCoroutine()
     {
+        yield return null;
         allPermissionsGrantedEvent.Invoke();
         yield break;
     }
 #endif
-    
+
     }
 
 }

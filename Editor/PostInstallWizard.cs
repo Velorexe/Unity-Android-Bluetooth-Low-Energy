@@ -148,7 +148,9 @@ namespace Android.BLE.UnityEditor
                 EditorGUILayout.LabelField("AndroidManifest.xml file found",bold);
                 EditorGUILayout.LabelField("Manifest Bluetooth permissions:");
                 foreach(var androidPermission in m_androidPermission){
-                    if((int)PlayerSettings.Android.targetSdkVersion<androidPermission.minSdkVersion){
+                    // if targetSDK set to automatic ( value is 0 ), it's hard to determine the SDK that will be used, use minSDK instead.
+                    var targetSDK = Mathf.Max((int)PlayerSettings.Android.minSdkVersion,(int)PlayerSettings.Android.targetSdkVersion);
+                    if(targetSDK<androidPermission.minSdkVersion){
                         continue;
                     }
                     bool hasPerm = androidPermission.Exists(existingManifestContents);
