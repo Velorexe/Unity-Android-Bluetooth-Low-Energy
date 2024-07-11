@@ -42,12 +42,25 @@ namespace Android.BLE
         {
             private set;
             get;
+
         }
 
         [SerializeField] bool _checkPermissionsOnStart;
 
         void Awake()
         {
+            // Allow for this script to be added by GameObject.AddComponent 
+            // All UnityEvents are null by default if not Serialized by the Editor
+            if(allPermissionsGrantedEvent==null){
+                allPermissionsGrantedEvent = new UnityEvent();
+            }
+            if(permissionDeniedEvent==null){
+                permissionDeniedEvent = new UnityEvent<string>();                
+            }
+            if(somePermissionsDeniedEvent==null){
+                somePermissionsDeniedEvent = new UnityEvent();                
+            }
+            
             Instance = this;
         }
 
