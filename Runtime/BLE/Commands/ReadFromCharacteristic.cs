@@ -42,9 +42,9 @@ namespace Android.BLE.Commands
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
         public ReadFromCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, ReadCharacteristicValueReceived valueReceived, bool customGatt = false) : base(false, false)
         {
-            DeviceAddress = deviceAddress;
-            Service = serviceAddress;
-            Characteristic = characteristicAddress;
+            DeviceAddress = deviceAddress.ToLower();
+            Service = serviceAddress.ToLower();
+            Characteristic = characteristicAddress.ToLower();
 
             OnReadCharacteristicValueReceived = valueReceived;
 
