@@ -15,6 +15,8 @@ namespace Android.BLE.UnityEditor
         static string assetsAndroidManifestPath;
         static string packageAndroidManifestPath = Path.GetFullPath($"Packages/{packageName}/Plugins/Android/AndroidManifest.xml");
         static bool hasExistingManifest;
+
+        static bool forcePreAndroidSDK31 = false;
         static string existingManifestContents;
 
 
@@ -147,9 +149,18 @@ namespace Android.BLE.UnityEditor
             if( hasExistingManifest ){
                 EditorGUILayout.LabelField("AndroidManifest.xml file found",bold);
                 EditorGUILayout.LabelField("Manifest Bluetooth permissions:");
+                // if targetSDK set to automatic ( value is 0 ), it's hard to determine the SDK that will be used, use minSDK instead.
+                var targetSDK = (int)PlayerSettings.Android.targetSdkVersion;
+                if(targetSDK==0){                    
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Android API Level "); 
+                    if( GUILayout.Button("API Level 31 or greater ( suggested )") ) forcePreAndroidSDK31=false;
+                    if( GUILayout.Button("API Level to pre 31")) forcePreAndroidSDK31=true;
+                    EditorGUILayout.EndHorizontal();
+                    targetSDK = forcePreAndroidSDK31 ? 0:31;
+                }
+
                 foreach(var androidPermission in m_androidPermission){
-                    // if targetSDK set to automatic ( value is 0 ), it's hard to determine the SDK that will be used, use minSDK instead.
-                    var targetSDK = Mathf.Max((int)PlayerSettings.Android.minSdkVersion,(int)PlayerSettings.Android.targetSdkVersion);
                     if(targetSDK<androidPermission.minSdkVersion){
                         continue;
                     }
