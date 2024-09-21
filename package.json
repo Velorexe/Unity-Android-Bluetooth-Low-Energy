@@ -2,7 +2,7 @@
     "name":"com.velorexe.androidbluetoothlowenergy",
     "displayName":"Android Bluetooth Low Energy Library",
     "description":"A Unity Android plugin to support basic Bluetooth Low Energy interactions",
-    "version":"0.0.4",
+    "version":"0.0.5",
     "dependencies": {
         "com.unity.mobile.android-logcat": "1.2.3",
         "com.unity.ugui": "1.0.0",
