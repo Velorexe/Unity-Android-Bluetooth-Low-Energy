@@ -41,6 +41,10 @@ public class DeviceButton : MonoBehaviour
         _deviceNameText.text = device.Name;
 
         _bleDevice = device;
+
+        if(!gameObject.activeSelf){
+            gameObject.SetActive(true);
+        }
     }
 
     public void Update()
