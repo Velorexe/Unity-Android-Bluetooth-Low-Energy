@@ -205,7 +205,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 525964714}
   m_HandleRect: {fileID: 525964713}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1488,7 +1488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 231f3fb7fa5cd344faaf08cef260354b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _logBleMessages: 0
+  _logBleMessages: 1
 --- !u!1 &2015063611
 GameObject:
   m_ObjectHideFlags: 0
@@ -1812,7 +1812,9 @@ MonoBehaviour:
   _deviceRssiText: {fileID: 2458383456577398370}
   _deviceButtonImage: {fileID: 3061271911279583707}
   _deviceButtonText: {fileID: 3061271911329015171}
+  _buttonComponent: {fileID: 3061271912647009000}
   _onConnectedColor: {r: 0, g: 0.6037736, b: 0.08843145, a: 1}
+  _rssiUpdateDuration: 1
 --- !u!114 &2458383456577398370
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2194,19 +2196,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3061271912647009001}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1911155569748103746}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: Connect
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &3061271912647009001
 MonoBehaviour:
   m_ObjectHideFlags: 0

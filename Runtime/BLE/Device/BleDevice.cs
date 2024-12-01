@@ -172,6 +172,7 @@ namespace Android.BLE
         {
             if (!msg.HasError)
             {
+                if(Debug.isDebugBuild) Debug.Log($"Message {msg.Command}");
                 switch (msg.Command)
                 {
                     case "connectedToDevice":
@@ -203,7 +204,13 @@ namespace Android.BLE
                             }
 
                             service[i] = new BleGattService(receivedServices[i].UUID.ToLower(), characteristics, this);
-                            _servicesMap.Add(receivedServices[i].UUID, service[i]);
+                            if(_servicesMap.ContainsKey(receivedServices[i].UUID)){
+                                Debug.LogWarning("Got service already");
+                                _servicesMap[receivedServices[i].UUID]=service[i];
+                            }
+                            else {
+                                _servicesMap.Add(receivedServices[i].UUID, service[i]);
+                            }
 
                             foreach (BleGattCharacteristic characteristic in characteristics)
                             {

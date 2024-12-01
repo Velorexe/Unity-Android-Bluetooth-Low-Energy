@@ -21,7 +21,7 @@ public class ExampleBleInteractor : MonoBehaviour
 
     private void OnDeviceFound(BleDevice device)
     {
-        DeviceButton button = Instantiate(_deviceButton, _deviceList).GetComponent<DeviceButton>();
+        DeviceRowView button = Instantiate(_deviceButton, _deviceList).GetComponent<DeviceRowView>();
         button.Show(device);
     }
 }
