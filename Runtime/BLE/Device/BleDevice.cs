@@ -105,7 +105,7 @@ namespace Android.BLE
         {
             _onMtuSizeChanged = onMtuSizeChanged;
 
-            BleTask task = new BleTask("requestMtuSize", MacAddress, mtuSize);
+            BleTask task = new BleTask("changeMtuSize", MacAddress, mtuSize);
             BleManager.Instance.SendTask(task, this);
         }
 
