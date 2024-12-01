@@ -47,6 +47,12 @@ namespace Android.BLE
 
         [SerializeField] bool _checkPermissionsOnStart;
 
+        [System.Serializable]
+        public class ErrorMessageEvent:UnityEvent<string>
+        {
+
+        }
+
         void Awake()
         {
             // Allow for this script to be added by GameObject.AddComponent 
@@ -55,7 +61,7 @@ namespace Android.BLE
                 allPermissionsGrantedEvent = new UnityEvent();
             }
             if(permissionDeniedEvent==null){
-                permissionDeniedEvent = new UnityEvent<string>();                
+                permissionDeniedEvent = new ErrorMessageEvent();                
             }
             if(somePermissionsDeniedEvent==null){
                 somePermissionsDeniedEvent = new UnityEvent();                
@@ -179,14 +185,6 @@ namespace Android.BLE
 
         }
 
-        static int getAPIVersion()
-        {
-            using (var version = new AndroidJavaClass("android.os.Build$VERSION"))
-            {
-                return version.GetStatic<int>("SDK_INT");
-            }
-        }
-
 #else
     /*
         Bypass runtime permissions if running on 2019.4 or earlier
@@ -198,6 +196,13 @@ namespace Android.BLE
         yield break;
     }
 #endif
+    static int getAPIVersion()
+    {
+        using (var version = new AndroidJavaClass("android.os.Build$VERSION"))
+        {
+            return version.GetStatic<int>("SDK_INT");
+        }
+    }
 
     }
 
