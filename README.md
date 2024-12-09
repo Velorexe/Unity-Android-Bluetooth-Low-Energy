@@ -33,7 +33,7 @@ If you're interested, I've written an article about the inner workings of the li
 #### Method 1. using git url in Unity Package Manager
 Advantages
 - Can be updated using Package Manager
-Requires git to be installed.
+*( Requires git to be installed. )*
 
 In Unity
 * Select "Window->Package Manager", 
