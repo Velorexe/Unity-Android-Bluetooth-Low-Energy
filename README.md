@@ -28,6 +28,35 @@ Most of the BLE operations utilize the .NET event system, so information can be 
 
 If you're interested, I've written an article about the inner workings of the library over on my website. You can check it out over here: [Creating an Android Bluetooth Low Energy plugin for Unity](https://velorexe.com/posts/unity-bluetooth-low-energy/).
 
+## Installation
+
+#### Method 1. using git url in Unity Package Manager
+Advantages
+- Can be updated using Package Manager
+Requires git to be installed.
+
+In Unity
+* Select "Window->Package Manager", 
+* Hit the plus button and then "Add Package from git URL"
+
+#### Method 2. downloading and add to Packages directory
+Advantages
+- Easier to use specific commits, or branches
+
+* Download from github as a zip. 
+* Exact the zip and put the folder in your Unity projects Package folder.
+
+## Configuration
+
+If it setup wizard hasn't opened automatically, select it from "Window/Android Bluetooth Low Energy Library". 
+This will guide you in adding the correct permissions for the AndroidManifest.xml.
+
+If using for the first time, you might want to import the sample package using the Package Manager. Select the package, and select the Samples tab and import.
+
+## Usage
+
+... coming soon
+
 ## Contact
 
 If you need any information, have questions about the project or found any bugs in this project, please create a new `Issue` and I'll take a look at it! If you've got more pressing questions or questions that aren't related to create an Issue for, you can contact with the methods below.
