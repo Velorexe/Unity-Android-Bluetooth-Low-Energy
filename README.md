@@ -48,7 +48,7 @@ Advantages
 
 ## Configuration
 
-If it setup wizard hasn't opened automatically, select it from "Window/Android Bluetooth Low Energy Library". 
+If the setup wizard hasn't opened automatically, select it from "Window->Android Bluetooth Low Energy Library". 
 This will guide you in adding the correct permissions for the AndroidManifest.xml.
 
 If using for the first time, you might want to import the sample package using the Package Manager. Select the package, and select the Samples tab and import.
