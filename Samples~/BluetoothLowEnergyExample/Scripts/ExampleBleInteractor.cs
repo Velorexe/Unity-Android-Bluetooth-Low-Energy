@@ -6,7 +6,7 @@ using UnityEngine.Android;
 public class ExampleBleInteractor : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _deviceButton;
+    private DeviceRowView _deviceButton;
     [SerializeField]
     private Transform _deviceList;
 
@@ -41,7 +41,7 @@ public class ExampleBleInteractor : MonoBehaviour
 
     private void OnDeviceFound(string name, string device)
     {
-        DeviceButton button = Instantiate(_deviceButton, _deviceList).GetComponent<DeviceButton>();
+        DeviceRowView button = Instantiate(_deviceButton, _deviceList);
         button.Show(name, device);
     }
 }
