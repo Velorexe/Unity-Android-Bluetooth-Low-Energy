@@ -1648,7 +1648,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 277c7d004b5732d4dae3e98add43d6f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deviceButton: {fileID: 4906767153569164797}
+  _deviceButton: {fileID: 8423505856127065703}
   _deviceList: {fileID: 663478794}
   _scanTime: 10
 --- !u!1 &2063471661
@@ -1796,24 +1796,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2063471661}
   m_CullTransparentMesh: 0
---- !u!114 &4906767153569164797
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8423505856127065702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c01a2e775b967b4393db5cd3c8bb96d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _deviceUuidText: {fileID: 8423505855333103153}
-  _deviceNameText: {fileID: 8423505856797160387}
-  _deviceButtonImage: {fileID: 8423505856127065700}
-  _deviceButtonText: {fileID: 8423505856145300028}
-  _onConnectedColor: {r: 0, g: 0.6037736, b: 0.08843145, a: 1}
-  _buttonComponent: {fileID: 8423505855347400023}
 --- !u!114 &8423505855101591379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2081,7 +2063,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4906767153569164797}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: Connect
         m_Mode: 1
@@ -2229,7 +2211,7 @@ GameObject:
   - component: {fileID: 8423505856127065699}
   - component: {fileID: 8423505856127065700}
   - component: {fileID: 8423505856127065698}
-  - component: {fileID: 4906767153569164797}
+  - component: {fileID: 8423505856127065703}
   m_Layer: 5
   m_Name: DeviceRow
   m_TagString: Untagged
@@ -2237,6 +2219,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!114 &8423505856127065703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8423505856127065702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d94c187f64323c948817cf18d125f20c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _deviceUuidText: {fileID: 8423505855333103153}
+  _deviceNameText: {fileID: 8423505856797160387}
+  _deviceButtonImage: {fileID: 8423505855347400022}
+  _deviceButtonText: {fileID: 8423505856145300028}
+  _onConnectedColor: {r: 0.23119004, g: 0.811, b: 0.17614478, a: 1}
+  _buttonComponent: {fileID: 8423505855347400023}
 --- !u!222 &8423505856145300027
 CanvasRenderer:
   m_ObjectHideFlags: 0
