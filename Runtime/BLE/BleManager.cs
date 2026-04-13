@@ -197,7 +197,8 @@ namespace Android.BLE
                 {
                     _activeCommand = _commandQueue.Dequeue();
                     _activeCommand?.Start();
-
+                    _activeTimer = 0;
+                    
                     if (_activeCommand != null)
                         CheckForLog("Executing new Command: " + _activeCommand.GetType().Name);
                 }
