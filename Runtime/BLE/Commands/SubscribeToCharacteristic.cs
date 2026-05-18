@@ -1,4 +1,5 @@
-﻿using Android.BLE.Extension;
+﻿using System.Threading.Tasks;
+using Android.BLE.Extension;
 
 namespace Android.BLE.Commands
 {
@@ -39,7 +40,7 @@ namespace Android.BLE.Commands
         /// <param name="service">The UUID of the Service that parents the Characteristic.</param>
         /// <param name="characteristic">The UUID of the Characteristic to read from.</param>
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
-        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, bool customGatt = false) : base(true, true)
+        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, bool customGatt = false) : base(false, true)
         {
             DeviceAddress = deviceAddress;
 
@@ -85,6 +86,10 @@ namespace Android.BLE.Commands
 
         public override bool CommandReceived(BleObject obj)
         {
+            if (string.Equals(obj.Command,"StartedSubscribingToCharacteristic"))
+            {
+                RunParallel = false;
+            }
             if (string.Equals(obj.Command, "CharacteristicValueChanged"))
             {
                 if (CustomGatt)

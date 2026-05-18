@@ -1,4 +1,5 @@
 ﻿using Android.BLE.Commands;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -185,27 +186,21 @@ namespace Android.BLE
         private void OnBleMessageReceived(BleObject obj)
         {
             CheckForLog(JsonUtility.ToJson(obj, true));
-
-            // Checks if the _activeCommand consumes the BleObject
-            if (_activeCommand != null && _activeCommand.CommandReceived(obj))
+            if( _activeCommand != null )
             {
-                _activeCommand.End();
-
-                // Queues a new _activeCommand if it has consumed the BleObject
-                // Since the command is not continious or parallel, it should be cleared if it's purpose is fulfilled
-                if (_commandQueue.Count > 0)
+                // Checks if the _activeCommand consumes the BleObject
+                if (_activeCommand.CommandReceived(obj))
                 {
-                    _activeCommand = _commandQueue.Dequeue();
-                    _activeCommand?.Start();
-                    _activeTimer = 0;
-                    
-                    if (_activeCommand != null)
-                        CheckForLog("Executing new Command: " + _activeCommand.GetType().Name);
-                }
-                else
-                    _activeCommand = null;
-            }
+                    _activeCommand.End();
 
+                    NextFromCommandQueue();
+                }
+                else if(_activeCommand.RunParallel)
+                {
+                    _parrallelStack.Add(_activeCommand);
+                    NextFromCommandQueue();
+                }
+            }
             // Run through the parallel stack, remove the commands that have consumed the BleObject
             for (int i = 0; i < _parrallelStack.Count; i++)
             {
@@ -216,6 +211,24 @@ namespace Android.BLE
                 }
             }
         }
+
+        private void NextFromCommandQueue()
+        {
+            // Queues a new _activeCommand if it has consumed the BleObject
+            // Since the command is not continious or parallel, it should be cleared if it's purpose is fulfilled
+            if (_commandQueue.Count > 0)
+            {
+                _activeCommand = _commandQueue.Dequeue();
+                _activeCommand?.Start();
+                _activeTimer = 0;
+                
+                if (_activeCommand != null)
+                    CheckForLog("Executing new Command: " + _activeCommand.GetType().Name);
+            }
+            else
+                _activeCommand = null;
+        }
+
 
         /// <summary>
         /// Queues a new <see cref="BleCommand"/> to execute.
