@@ -18,7 +18,7 @@
         public bool RunParallel
         {
             get;
-            private set;
+            protected set;
         }
 
         /// <summary>
@@ -61,5 +61,7 @@
         {
             return false;
         }
+
+
     }
 }

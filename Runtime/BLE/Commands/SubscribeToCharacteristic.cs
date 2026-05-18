@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Android.BLE.Extension;
 
 namespace Android.BLE.Commands
@@ -6,32 +7,14 @@ namespace Android.BLE.Commands
     /// <summary>
     /// Command to Subscribe to a BLE Device's Characteristic
     /// </summary>
-    public class SubscribeToCharacteristic : BleCommand
+    public class SubscribeToCharacteristic : CharacteristicCommand
     {
-        /// <summary>
-        /// The UUID of the BLE device.
-        /// </summary>
-        public readonly string DeviceAddress;
-
-        /// <summary>
-        /// The Service that parents the Characteristic.
-        /// </summary>
-        public readonly string Service;
-
-        /// <summary>
-        /// The Characteristic to write the message to.
-        /// </summary>
-        public readonly string Characteristic;
 
         /// <summary>
         /// The .NET event that sends the subscribe data back to the user.
         /// </summary>
         public readonly CharacteristicChanged OnCharacteristicChanged;
 
-        /// <summary>
-        /// Indicates if the UUID is custom (long-uuid instead of a short-hand).
-        /// </summary>
-        private readonly bool CustomGatt = false;
 
         /// <summary>
         /// Subscribes to a given BLE Characteristic.
@@ -40,14 +23,14 @@ namespace Android.BLE.Commands
         /// <param name="service">The UUID of the Service that parents the Characteristic.</param>
         /// <param name="characteristic">The UUID of the Characteristic to read from.</param>
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
-        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, bool customGatt = false) : base(false, true)
+        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, bool customGatt = false) : base(deviceAddress, service, characteristic, customGatt)
         {
-            DeviceAddress = deviceAddress;
+            // DeviceAddress = deviceAddress;
 
-            Service = service;
-            Characteristic = characteristic;
+            // Service = service;
+            // Characteristic = characteristic;
 
-            CustomGatt = customGatt;
+            // CustomGatt = customGatt;
         }
 
         /// <summary>
@@ -58,16 +41,16 @@ namespace Android.BLE.Commands
         /// <param name="characteristic">The UUID of the Characteristic to read from.</param>
         /// <param name="onDataFound">The <see cref="CharacteristicChanged"/> that will trigger if a value was updated on the Characteristic.</param>
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
-        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, CharacteristicChanged onDataFound, bool customGatt = false) : base(true, true)
+        public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, CharacteristicChanged onDataFound, bool customGatt = false) : base(deviceAddress, service, characteristic, customGatt)
         {
-            DeviceAddress = deviceAddress;
+            // DeviceAddress = deviceAddress;
 
-            Service = service;
-            Characteristic = characteristic;
+            // Service = service;
+            // Characteristic = characteristic;
+
+            // CustomGatt = customGatt;
 
             OnCharacteristicChanged += onDataFound;
-
-            CustomGatt = customGatt;
         }
 
         public override void Start()
@@ -86,30 +69,18 @@ namespace Android.BLE.Commands
 
         public override bool CommandReceived(BleObject obj)
         {
-            if (string.Equals(obj.Command,"StartedSubscribingToCharacteristic"))
+            if (!CompareCharacteristics(obj.Device, obj.Characteristic,obj.Service))
             {
-                RunParallel = false;
+                return false;
             }
-            if (string.Equals(obj.Command, "CharacteristicValueChanged"))
+            if (string.Equals(obj.Command,"StartedSubscribingToCharacteristic") && !RunParallel)
+            {                
+                UnityEngine.Debug.Log("StartedSubscribingToCharacteristic recieved switching to parallel");
+                RunParallel = true;
+            }
+            else if (string.Equals(obj.Command, "CharacteristicValueChanged"))
             {
-                if (CustomGatt)
-                {
-                    if (string.Equals(obj.Device, DeviceAddress) &&
-                        string.Equals(obj.Service, Service) &&
-                        string.Equals(obj.Characteristic, Characteristic))
-                    {
-                        OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
-                    }
-                }
-                else
-                {
-                    if (string.Equals(obj.Device, DeviceAddress) &&
-                        string.Equals(obj.Service.Get4BitUuid(), Service) &&
-                        string.Equals(obj.Characteristic.Get4BitUuid(), Characteristic))
-                    {
-                        OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
-                    }
-                }
+                OnCharacteristicChanged?.Invoke(obj.GetByteMessage());
             }
 
             return false;
