@@ -27,12 +27,12 @@ namespace Android.BLE.Commands
         /// Discovers BLE devices using the given time in milliseconds.
         /// </summary>
         /// <param name="discoverTime">The amount of searching time in milliseconds that. Defaults to <see cref="StandardDiscoverTime"/>.</param>
-        public DiscoverDevices(int discoverTime = StandardDiscoverTime) : base(true, false)
+        public DiscoverDevices(int discoverTime = StandardDiscoverTime) : base(true)
         {
             _discoverTime = discoverTime;
         }
 
-        public DiscoverDevices(Action<string, string> onDeviceDiscovered, int discoverTime = StandardDiscoverTime) : base(true, false)
+        public DiscoverDevices(Action<string, string> onDeviceDiscovered, int discoverTime = StandardDiscoverTime) : base(true)
         {
             OnDeviceDiscovered += new DeviceDiscovered(onDeviceDiscovered);
             _discoverTime = discoverTime;
@@ -44,7 +44,7 @@ namespace Android.BLE.Commands
         /// </summary>
         /// <param name="onDeviceDiscovered">The <see cref="DeviceDiscovered"/> that will trigger if a device is discovered.</param>
         /// <param name="discoverTime">The amount of searching time in milliseconds that. Defaults to <see cref="StandardDiscoverTime"/>.</param>
-        public DiscoverDevices(Action<string, string> onDeviceDiscovered, Action onFinishedDiscovering, int discoverTime = StandardDiscoverTime) : base(true, false)
+        public DiscoverDevices(Action<string, string> onDeviceDiscovered, Action onFinishedDiscovering, int discoverTime = StandardDiscoverTime) : base(true)
         {
             OnDeviceDiscovered += new DeviceDiscovered(onDeviceDiscovered);
             OnFinishedDiscovering = onFinishedDiscovering;

@@ -25,8 +25,12 @@ namespace Android.BLE
         public string Characteristic => characteristic;
         [SerializeField]
         private string characteristic;
+        
+        public string Descriptor => descriptor;
+        [SerializeField]
+        private string descriptor;
         #endregion
-
+        
         #region Command Information
         public string Command => command;
         [SerializeField]

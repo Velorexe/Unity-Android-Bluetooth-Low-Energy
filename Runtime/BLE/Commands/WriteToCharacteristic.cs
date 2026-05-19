@@ -5,32 +5,34 @@ namespace Android.BLE.Commands
     /// <summary>
     /// Command to write to a BLE Device's Characteristic
     /// </summary>
-    public class WriteToCharacteristic : BleCommand
+    public class WriteToCharacteristic : CharacteristicCommand
     {
-        /// <summary>
-        /// The UUID of the BLE device.
-        /// </summary>
-        public readonly string DeviceAddress;
+        // /// <summary>
+        // /// The UUID of the BLE device.
+        // /// </summary>
+        // public readonly string DeviceAddress;
 
-        /// <summary>
-        /// The Service that parents the Characteristic.
-        /// </summary>
-        public readonly string Service;
+        // /// <summary>
+        // /// The Service that parents the Characteristic.
+        // /// </summary>
+        // public readonly string Service;
 
-        /// <summary>
-        /// The Characteristic to write the message to.
-        /// </summary>
-        public readonly string Characteristic;
+        // /// <summary>
+        // /// The Characteristic to write the message to.
+        // /// </summary>
+        // public readonly string Characteristic;
+
+        // /// <summary>
+        // /// Indicates if the UUID is custom (long-uuid instead of a short-hand).
+        // /// </summary>
+        // public readonly bool CustomGatt;
 
         /// <summary>
         /// The data that's send encoded in Base64.
         /// </summary>
         public readonly string Base64Data;
 
-        /// <summary>
-        /// Indicates if the UUID is custom (long-uuid instead of a short-hand).
-        /// </summary>
-        public readonly bool CustomGatt;
+
 
         /// <summary>
         /// Writes to a given BLE Characteristic with the Base64 string <paramref name="data"/>.
@@ -40,16 +42,9 @@ namespace Android.BLE.Commands
         /// <param name="characteristicAddress">The UUID of the Characteristic to read from.</param>
         /// <param name="data">The Base64 encoded data that's send to the Characteristic</param>
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
-        public WriteToCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, string data, bool customGatt = false) : base(false, false)
-        {
-            DeviceAddress = deviceAddress;
-            Service = serviceAddress;
-            Characteristic = characteristicAddress;
-
-            Base64Data = data;
-
-            CustomGatt = customGatt;
-
+        public WriteToCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, string data, bool customGatt = false) : base( deviceAddress,  serviceAddress,  characteristicAddress, customGatt)
+        { 
+           Base64Data = data;
             _timeout = 1f;
         }
 
@@ -61,15 +56,10 @@ namespace Android.BLE.Commands
         /// <param name="characteristicAddress">The UUID of the Characteristic to read from.</param>
         /// <param name="data">The byte[] that'll be encoded to Base64 that's send to the Characteristic</param>
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
-        public WriteToCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, byte[] data, bool customGatt = false) : base(false, false)
+        public WriteToCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, byte[] data, bool customGatt = false) : base(deviceAddress,serviceAddress,characteristicAddress,customGatt)
         {
-            DeviceAddress = deviceAddress;
-            Service = serviceAddress;
-            Characteristic = characteristicAddress;
-            CustomGatt = customGatt;
             //currently in the Java lib UnityAndroidBLE.writeToCustomGattCharacteristic uses base64 encoded data only for CustomGattCharacteristics 
             Base64Data = CustomGatt ? System.Convert.ToBase64String(data) : Encoding.ASCII.GetString(data);
-
             _timeout = 1f;
         }
 
@@ -77,6 +67,22 @@ namespace Android.BLE.Commands
         {
             string command = CustomGatt ? "writeToCustomGattCharacteristic" : "writeToGattCharacteristic";
             BleManager.SendCommand(command, DeviceAddress, Service, Characteristic, Base64Data);
+        }
+
+        public override bool CommandReceived(BleObject obj)
+        {
+            UnityEngine.Debug.Log($"WriteCharacteristic CommandReceived {obj.Command} {CompareCharacteristics(obj.Device,obj.Service,obj.Characteristic)} {CustomGatt}");
+            if (!CompareCharacteristics(obj.Device,obj.Service,obj.Characteristic))
+            {
+                return false;
+            }
+
+            if (string.Equals(obj.Command, "CharacteristicWrite"))
+            {
+                return true;                
+            }
+
+            return false;
         }
     }
 }

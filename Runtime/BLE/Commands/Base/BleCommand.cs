@@ -15,20 +15,18 @@
         /// If <see langword="true"/>, the <see cref="BleCommand"/> will run parallel with 
         /// other commands. Helpful for commands such as <see cref="SubscribeToCharacteristic"/>.
         /// </summary>
-        public readonly bool RunParallel = false;
-
-        /// <summary>
-        /// Will continue running, even if <see cref="CommandReceived(BleObject)"/> returns <see langword="true"/>
-        /// </summary>
-        public readonly bool RunContiniously = false;
+        public bool RunParallel
+        {
+            get;
+            protected set;
+        }
 
         /// <summary>
         /// Base initialization of the <see cref="BleCommand"/>.
         /// </summary>
-        public BleCommand(bool runParallel = false, bool runContiniously = false)
+        public BleCommand(bool runParallel = false)
         {
             RunParallel = runParallel;
-            RunContiniously = runContiniously;
         }
 
         /// <summary>
@@ -57,5 +55,7 @@
         {
             return false;
         }
+
+
     }
 }

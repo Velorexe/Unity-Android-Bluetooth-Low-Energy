@@ -1,4 +1,5 @@
 ﻿using Android.BLE.Commands;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -75,7 +76,7 @@ namespace Android.BLE
         /// <summary>
         /// The stack of parallel running <see cref="BleCommand"/>.
         /// </summary>
-        private readonly List<BleCommand> _parrallelStack = new List<BleCommand>();
+        private readonly List<BleCommand> _parallelStack = new List<BleCommand>();
 
         /// <summary>
         /// The active non-parallel or continuous <see cref="BleCommand"/>.
@@ -169,7 +170,7 @@ namespace Android.BLE
         /// </summary>
         public void DeInitialize()
         {
-            foreach (BleCommand command in _parrallelStack)
+            foreach (BleCommand command in _parallelStack)
                 command.End();
 
             _bleLibrary?.Dispose();
@@ -185,37 +186,49 @@ namespace Android.BLE
         private void OnBleMessageReceived(BleObject obj)
         {
             CheckForLog(JsonUtility.ToJson(obj, true));
-
-            // Checks if the _activeCommand consumes the BleObject
-            if (_activeCommand != null && _activeCommand.CommandReceived(obj))
+            if( _activeCommand != null )
             {
-                _activeCommand.End();
-
-                // Queues a new _activeCommand if it has consumed the BleObject
-                // Since the command is not continious or parallel, it should be cleared if it's purpose is fulfilled
-                if (_commandQueue.Count > 0)
+                // Checks if the _activeCommand consumes the BleObject
+                if (_activeCommand.CommandReceived(obj))
                 {
-                    _activeCommand = _commandQueue.Dequeue();
-                    _activeCommand?.Start();
-                    _activeTimer = 0;
-                    
-                    if (_activeCommand != null)
-                        CheckForLog("Executing new Command: " + _activeCommand.GetType().Name);
+                    _activeCommand.End();
+
+                    NextFromCommandQueue();
                 }
-                else
-                    _activeCommand = null;
-            }
-
-            // Run through the parallel stack, remove the commands that have consumed the BleObject
-            for (int i = 0; i < _parrallelStack.Count; i++)
-            {
-                if (_parrallelStack[i].CommandReceived(obj))
+                else if(_activeCommand.RunParallel) //switch command to parallel
                 {
-                    _parrallelStack[i].End();
-                    _parrallelStack.RemoveAt(i);
+                    _parallelStack.Add(_activeCommand);
+                    NextFromCommandQueue();
+                }
+            }
+            // Run through the parallel stack, remove the commands that have consumed the BleObject
+            for (int i = _parallelStack.Count-1; i >= 0; i--)
+            {
+                if (_parallelStack[i].CommandReceived(obj))
+                {
+                    _parallelStack[i].End();
+                    _parallelStack.RemoveAt(i);
                 }
             }
         }
+
+        private void NextFromCommandQueue()
+        {
+            // Queues a new _activeCommand if it has consumed the BleObject
+            // Since the command is not continious or parallel, it should be cleared if it's purpose is fulfilled
+            if (_commandQueue.Count > 0)
+            {
+                _activeCommand = _commandQueue.Dequeue();
+                _activeCommand?.Start();
+                _activeTimer = 0;
+                
+                if (_activeCommand != null)
+                    CheckForLog("Executing new Command: " + _activeCommand.GetType().Name);
+            }
+            else
+                _activeCommand = null;
+        }
+
 
         /// <summary>
         /// Queues a new <see cref="BleCommand"/> to execute.
@@ -224,9 +237,9 @@ namespace Android.BLE
         public void QueueCommand(BleCommand command)
         {
             CheckForLog("Queueing Command: " + command.GetType().Name);
-            if (command.RunParallel || command.RunContiniously)
+            if ( command.RunParallel )
             {
-                _parrallelStack.Add(command);
+                _parallelStack.Add(command);
                 command.Start();
             }
             else
