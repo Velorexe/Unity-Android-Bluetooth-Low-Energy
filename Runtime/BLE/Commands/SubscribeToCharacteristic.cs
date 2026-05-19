@@ -71,10 +71,6 @@ namespace Android.BLE.Commands
                     RunParallel = true;            
                 }
             }
-            else if (string.Equals(obj.Command,"StartedSubscribingToCharacteristic") && !RunParallel)
-            {     
-                //UnityEngine.Debug.Log("StartedSubscribingToCharacteristic");
-            }
             else if (string.Equals(obj.Command, "CharacteristicValueChanged"))
             {
                 OnCharacteristicChanged?.Invoke(obj.GetByteMessage());

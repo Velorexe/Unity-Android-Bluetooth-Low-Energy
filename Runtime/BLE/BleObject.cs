@@ -29,11 +29,8 @@ namespace Android.BLE
         public string Descriptor => descriptor;
         [SerializeField]
         private string descriptor;
-        
         #endregion
-
-
-
+        
         #region Command Information
         public string Command => command;
         [SerializeField]

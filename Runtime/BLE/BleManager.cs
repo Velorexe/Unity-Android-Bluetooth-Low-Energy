@@ -195,10 +195,8 @@ namespace Android.BLE
 
                     NextFromCommandQueue();
                 }
-                else if(_activeCommand.RunParallel) //swithed to parallel
+                else if(_activeCommand.RunParallel) //switch command to parallel
                 {
-                    UnityEngine.Debug.Log("moving to parallel stack");
-                    CheckForLog("moving to parallel stack");
                     _parallelStack.Add(_activeCommand);
                     NextFromCommandQueue();
                 }
