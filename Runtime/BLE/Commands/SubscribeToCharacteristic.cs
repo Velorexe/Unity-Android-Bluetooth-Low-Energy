@@ -25,12 +25,6 @@ namespace Android.BLE.Commands
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
         public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, bool customGatt = false) : base(deviceAddress, service, characteristic, customGatt)
         {
-            // DeviceAddress = deviceAddress;
-
-            // Service = service;
-            // Characteristic = characteristic;
-
-            // CustomGatt = customGatt;
         }
 
         /// <summary>
@@ -43,13 +37,6 @@ namespace Android.BLE.Commands
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
         public SubscribeToCharacteristic(string deviceAddress, string service, string characteristic, CharacteristicChanged onDataFound, bool customGatt = false) : base(deviceAddress, service, characteristic, customGatt)
         {
-            // DeviceAddress = deviceAddress;
-
-            // Service = service;
-            // Characteristic = characteristic;
-
-            // CustomGatt = customGatt;
-
             OnCharacteristicChanged += onDataFound;
         }
 
@@ -69,14 +56,24 @@ namespace Android.BLE.Commands
 
         public override bool CommandReceived(BleObject obj)
         {
-            if (!CompareCharacteristics(obj.Device, obj.Characteristic,obj.Service))
+            
+            if (!CompareCharacteristics(obj.Device,obj.Service,obj.Characteristic))
             {
                 return false;
             }
-            if (string.Equals(obj.Command,"StartedSubscribingToCharacteristic") && !RunParallel)
-            {                
-                UnityEngine.Debug.Log("StartedSubscribingToCharacteristic recieved switching to parallel");
-                RunParallel = true;
+
+            if (string.Equals(obj.Command, "DescriptorWrite"))
+            {
+                //UnityEngine.Debug.Log($"DescriptorWrite uuid={obj.Descriptor.Get16BitUuid()} val={obj.GetByteMessage()[0]} ");
+                if(string.Equals(obj.Descriptor.Get16BitUuid(),"2902") && obj.GetByteMessage()[0] == 0x1)
+                {
+                    //UnityEngine.Debug.Log("DescriptorWrite recieved switching to parallel");
+                    RunParallel = true;            
+                }
+            }
+            else if (string.Equals(obj.Command,"StartedSubscribingToCharacteristic") && !RunParallel)
+            {     
+                //UnityEngine.Debug.Log("StartedSubscribingToCharacteristic");
             }
             else if (string.Equals(obj.Command, "CharacteristicValueChanged"))
             {

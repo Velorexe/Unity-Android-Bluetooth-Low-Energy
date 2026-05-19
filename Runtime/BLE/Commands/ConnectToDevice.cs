@@ -36,7 +36,7 @@
         /// Connects to a BLE device with the given UUID.
         /// </summary>
         /// <param name="deviceAddress">The UUID that BLE should connect to.</param>
-        public ConnectToDevice(string deviceAddress) : base(true, true)
+        public ConnectToDevice(string deviceAddress) : base(true)
         {
             _deviceAddress = deviceAddress;
         }
@@ -48,7 +48,7 @@
         /// <param name="deviceAddress">The UUID that BLE should connect to.</param>
         /// <param name="onConnected">The <see cref="ConnectionChange"/> that will trigger if the device is connected.</param>
         public ConnectToDevice(string deviceAddress,
-            ConnectionChange onConnected) : base(true, true)
+            ConnectionChange onConnected) : base(true)
         {
             _deviceAddress = deviceAddress;
             OnConnected += onConnected;
@@ -63,7 +63,7 @@
         /// <param name="onDisconnected">The <see cref="ConnectionChange"/> that will trigger if the device has disconnected.</param>
         public ConnectToDevice(string deviceAddress,
             ConnectionChange onConnected,
-            ConnectionChange onDisconnected) : base(true, true)
+            ConnectionChange onDisconnected) : base(true)
         {
             _deviceAddress = deviceAddress;
 
@@ -85,7 +85,7 @@
             ConnectionChange onConnected,
             ConnectionChange onDisconnected,
             ServiceDiscovered onServiceDiscovered,
-            CharacteristicDiscovered onCharacteristicDiscovered) : base(true, true)
+            CharacteristicDiscovered onCharacteristicDiscovered) : base(true)
         {
             _deviceAddress = deviceAddress;
 

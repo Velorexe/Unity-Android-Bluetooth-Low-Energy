@@ -26,7 +26,7 @@ namespace Android.BLE.Commands
         /// </summary>
         protected readonly bool CustomGatt = false;
 
-        public CharacteristicCommand(string deviceAddress, string service, string characteristic, bool customGatt = false) : base(false, false)
+        public CharacteristicCommand(string deviceAddress, string service, string characteristic, bool customGatt = false) : base(false)
         {
             DeviceAddress = deviceAddress;
             Service = service;
@@ -38,24 +38,24 @@ namespace Android.BLE.Commands
         protected bool CompareCharacteristics(string device, string service, string characteristic)
         {
             if (CustomGatt)
+            {
+                if (string.Equals(device, DeviceAddress) &&
+                    string.Equals(service, Service) &&
+                    string.Equals(characteristic, Characteristic))
                 {
-                    if (string.Equals(device, DeviceAddress) &&
-                        string.Equals(service, Service) &&
-                        string.Equals(characteristic, Characteristic))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-                else
+            }
+            else
+            {
+                if (string.Equals(device, DeviceAddress) &&
+                    string.Equals(Service, service.Get16BitUuid()) &&
+                    string.Equals(Characteristic, characteristic.Get16BitUuid()))
                 {
-                    if (string.Equals(device, DeviceAddress) &&
-                        string.Equals(Service.Get16BitUuid(), service) &&
-                        string.Equals(Characteristic.Get16BitUuid(), characteristic))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-                return false;
+            }
+            return false;
         }
     }
 

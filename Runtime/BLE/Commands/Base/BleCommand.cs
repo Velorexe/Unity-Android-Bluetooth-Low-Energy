@@ -22,17 +22,11 @@
         }
 
         /// <summary>
-        /// Will continue running, even if <see cref="CommandReceived(BleObject)"/> returns <see langword="true"/>
-        /// </summary>
-        public readonly bool RunContiniously = false;
-
-        /// <summary>
         /// Base initialization of the <see cref="BleCommand"/>.
         /// </summary>
-        public BleCommand(bool runParallel = false, bool runContiniously = false)
+        public BleCommand(bool runParallel = false)
         {
             RunParallel = runParallel;
-            RunContiniously = runContiniously;
         }
 
         /// <summary>

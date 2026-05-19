@@ -43,15 +43,8 @@ namespace Android.BLE.Commands
         /// <param name="data">The Base64 encoded data that's send to the Characteristic</param>
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
         public WriteToCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, string data, bool customGatt = false) : base( deviceAddress,  serviceAddress,  characteristicAddress, customGatt)
-        {
-            // DeviceAddress = deviceAddress;
-            // Service = serviceAddress;
-            // Characteristic = characteristicAddress;
-
- 
-            // CustomGatt = customGatt;
+        { 
            Base64Data = data;
-
             _timeout = 1f;
         }
 
@@ -65,13 +58,8 @@ namespace Android.BLE.Commands
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
         public WriteToCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, byte[] data, bool customGatt = false) : base(deviceAddress,serviceAddress,characteristicAddress,customGatt)
         {
-            // DeviceAddress = deviceAddress;
-            // Service = serviceAddress;
-            // Characteristic = characteristicAddress;
-            // CustomGatt = customGatt;
             //currently in the Java lib UnityAndroidBLE.writeToCustomGattCharacteristic uses base64 encoded data only for CustomGattCharacteristics 
             Base64Data = CustomGatt ? System.Convert.ToBase64String(data) : Encoding.ASCII.GetString(data);
-
             _timeout = 1f;
         }
 
@@ -79,6 +67,22 @@ namespace Android.BLE.Commands
         {
             string command = CustomGatt ? "writeToCustomGattCharacteristic" : "writeToGattCharacteristic";
             BleManager.SendCommand(command, DeviceAddress, Service, Characteristic, Base64Data);
+        }
+
+        public override bool CommandReceived(BleObject obj)
+        {
+            UnityEngine.Debug.Log($"WriteCharacteristic CommandReceived {obj.Command} {CompareCharacteristics(obj.Device,obj.Service,obj.Characteristic)} {CustomGatt}");
+            if (!CompareCharacteristics(obj.Device,obj.Service,obj.Characteristic))
+            {
+                return false;
+            }
+
+            if (string.Equals(obj.Command, "CharacteristicWrite"))
+            {
+                return true;                
+            }
+
+            return false;
         }
     }
 }

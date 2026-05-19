@@ -44,13 +44,7 @@ namespace Android.BLE.Commands
         /// <param name="customGatt"><see langword="true"/> if the GATT Characteristic UUID address is a long-hand, not short-hand.</param>
         public ReadFromCharacteristic(string deviceAddress, string serviceAddress, string characteristicAddress, ReadCharacteristicValueReceived valueReceived, bool customGatt = false) : base(deviceAddress,serviceAddress,characteristicAddress,customGatt)
         {
-            // DeviceAddress = deviceAddress;
-            // Service = serviceAddress.ToLower();
-            // Characteristic = characteristicAddress.ToLower();
-            // CustomGatt = customGatt;
-
             OnReadCharacteristicValueReceived = valueReceived;
-
             _timeout = 1f;
         }
 
@@ -64,8 +58,7 @@ namespace Android.BLE.Commands
         {
             if (string.Equals(obj.Command, "ReadFromCharacteristic"))
             {
-                if ((!CustomGatt && string.Equals(obj.Characteristic.Get16BitUuid(), Characteristic) && string.Equals(obj.Service.Get16BitUuid(), Service))
-                    || (CustomGatt && string.Equals(obj.Characteristic, Characteristic) && string.Equals(obj.Service, Service)))
+                if (CompareCharacteristics(obj.Device,obj.Service,obj.Characteristic))
                 {
                     OnReadCharacteristicValueReceived?.Invoke(obj.GetByteMessage());
                     return true;

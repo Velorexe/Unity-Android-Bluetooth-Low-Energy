@@ -239,7 +239,7 @@ namespace Android.BLE
         public void QueueCommand(BleCommand command)
         {
             CheckForLog("Queueing Command: " + command.GetType().Name);
-            if (command.RunParallel || command.RunContiniously)
+            if ( command.RunParallel )
             {
                 _parallelStack.Add(command);
                 command.Start();
